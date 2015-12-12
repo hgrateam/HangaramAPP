@@ -59,6 +59,7 @@ public class TodayMealActivity extends AppCompatActivity {
                 ps.setMM(12);
                 ps.setAY(2015);
                 ps.parse();
+        // ps.parse가 처리하는데 시간이 걸리기 때문에 그냥 getMenu()를 하면 에러가 떠버린다.
             }
         });
 

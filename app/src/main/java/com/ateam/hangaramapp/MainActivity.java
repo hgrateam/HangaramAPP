@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
 
 
-// ps.parse가 처리하는데 시간이 걸리기 때문에 그냥 getMenu()를 하면 에러가 떠버린다.
 
 
             }
