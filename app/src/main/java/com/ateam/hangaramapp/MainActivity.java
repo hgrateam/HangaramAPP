@@ -39,11 +39,6 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
 
 
-                ParseSen ps;
-                ps = new ParseSen(callbackEvent);
-                ps.setMM(12);
-                ps.setAY(2015);
-                ps.parse();
 // ps.parse가 처리하는데 시간이 걸리기 때문에 그냥 getMenu()를 하면 에러가 떠버린다.
 
 
@@ -72,19 +67,6 @@ public class MainActivity extends AppCompatActivity
 
 
     // 그래서 다음 소스대로 하면 된다.
-    ParseCallBack callbackEvent = new ParseCallBack() {
-
-        @Override
-        public void callbackMethod(ParseSen a) {
-            // TODO Auto-generated method stub
-
-            // ParseSen의 파싱이 끝나면 여기가 호출된다. 이제부터는 getMenu()를 사용할 수 있다.
-            // 여기서부터 처리하고 싶은거 처리하면 됨
-            // 12월 2015년 으로 설정되어있따.
-            Log.i("info", "23일 메뉴 : " + a.getMenu(23));
-            Log.i("info", "12일 메뉴 : " + a.getMenu(12));
-        }
-    };
 
 
     @Override
