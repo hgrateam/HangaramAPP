@@ -1,2 +1,2 @@
 # HangaramAPP
-This project contains android application of Hangaram H.S. in Seoul, Korea.
+This project contains an android application of Hangaram H.S. in Seoul, Korea.
