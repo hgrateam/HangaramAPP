@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HangaramAPP</string>
+    <string name="navigation_drawer_menu_communicate">Communicate</string>
+    <string name="navigation_drawer_menu_school_menu">School Menu</string>
+    <string name="navigation_drawer_menu_school_life">School life</string>
+    <string name="navigation_drawer_menu_today_meal">Today\'s Meal</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">HangaramAPP</string>
+    <string name="today_meal">Coming Soon!</string>
+</resources>

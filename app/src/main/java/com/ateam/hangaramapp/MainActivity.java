@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity
                 ps.setMM(12);
                 ps.setAY(2015);
                 ps.parse();
-
 // ps.parse가 처리하는데 시간이 걸리기 때문에 그냥 getMenu()를 하면 에러가 떠버린다.
 
 
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity
 
 
     // 그래서 다음 소스대로 하면 된다.
-    ParseCallBack callbackEvent = new ParseCallBack(){
+    ParseCallBack callbackEvent = new ParseCallBack() {
 
         @Override
         public void callbackMethod(ParseSen a) {
@@ -69,8 +68,6 @@ public class MainActivity extends AppCompatActivity
             Log.i("info", "12일 메뉴 : " + a.getMenu(12));
         }
     };
-
-
 
 
     @Override
