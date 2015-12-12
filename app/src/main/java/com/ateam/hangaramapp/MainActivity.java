@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity
             // 12월 2015년 으로 설정되어있따.
             Log.i("info", "23일 메뉴 : " + a.getMenu(23));
             Log.i("info", "12일 메뉴 : " + a.getMenu(12));
+            Log.i("info", "14일 메뉴 : " + a.getMenu(14));
         }
     };
 
