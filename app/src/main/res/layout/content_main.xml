@@ -15,7 +15,7 @@
     <!-- A CardView that contains a TextView -->
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_view"
+        android:id="@+id/card_today_meal"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="200dp"
@@ -33,6 +33,54 @@
             android:gravity="center"
             android:textSize="20sp"
             android:text="@string/today_meal"/>
+    </android.support.v7.widget.CardView>
+
+    <!-- A CardView that contains a TextView -->
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_schedule"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="8dp"
+        android:clickable="true"
+        android:layout_below="@+id/card_today_meal"
+        android:foreground="?selectableItemBackground"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="@dimen/cardview_default_elevation"
+        android:stateListAnimator="@anim/card_elevation">
+
+        <TextView
+            android:id="@+id/schedule"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:text="학사 일정 예정"/>
+    </android.support.v7.widget.CardView>
+
+    <!-- A CardView that contains a TextView -->
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_time_table"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="8dp"
+        android:clickable="true"
+        android:layout_below="@+id/card_schedule"
+        android:foreground="?selectableItemBackground"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="@dimen/cardview_default_elevation"
+        android:stateListAnimator="@anim/card_elevation">
+
+        <TextView
+            android:id="@+id/time_table"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:text="시간표 예정"/>
     </android.support.v7.widget.CardView>
 
 </RelativeLayout>

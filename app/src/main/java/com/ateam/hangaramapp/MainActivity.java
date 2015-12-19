@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        CardView cardView = (CardView) findViewById(R.id.card_view);
+        CardView cardView = (CardView) findViewById(R.id.card_today_meal);
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
