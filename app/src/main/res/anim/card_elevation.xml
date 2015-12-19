@@ -4,10 +4,10 @@
         android:state_enabled="true"
         android:state_pressed="true">
         <objectAnimator
-            android:duration="@android:integer/button_pressed_animation_duration"
+            android:duration="@*android:integer/button_pressed_animation_duration"
             android:propertyName="translationZ"
             android:valueFrom="2dip"
-            android:valueTo="@android:dimen/button_pressed_z_material"
+            android:valueTo="@*android:dimen/button_pressed_z_material"
             android:valueType="floatType" />
     </item>
     <item>
