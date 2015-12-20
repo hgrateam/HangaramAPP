@@ -37,10 +37,6 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-
-
-
-
             }
         });
 
@@ -49,6 +45,16 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, TodayMealActivity.class);
+                //오늘의 급식으로 진입한다.
+                startActivity(intent);
+            }
+        });
+
+        CardView cardView2 = (CardView) findViewById(R.id.card_schedule);
+        cardView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, SCalendar.class);
                 //오늘의 급식으로 진입한다.
                 startActivity(intent);
             }

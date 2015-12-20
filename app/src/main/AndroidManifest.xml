@@ -32,7 +32,7 @@
                 android:value="com.ateam.hangaramapp.MainActivity" />
             >
         </activity>
-        <activity android:name=".Calendar"></activity>
+        <activity android:name=".SCalendar"></activity>
     </application>
 
 </manifest>

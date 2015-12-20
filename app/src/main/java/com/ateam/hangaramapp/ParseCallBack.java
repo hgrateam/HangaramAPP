@@ -5,4 +5,6 @@ package com.ateam.hangaramapp;
  */
 public interface ParseCallBack {
     public void callbackMethod(ParseSen a);
+    public void callbackMethod_Cal(ParseCal a);
 }
+

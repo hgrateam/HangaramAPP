@@ -7,6 +7,25 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.ateam.hangaramapp.Calendar">
+    tools:context="com.ateam.hangaramapp.SCalendar">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/calendar_title"
+        android:textSize="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/calendar_title"
+        android:id="@+id/calendar_tablelayout"
+        android:layout_centerHorizontal="true"
+        >
+
+    </TableLayout>
 </RelativeLayout>

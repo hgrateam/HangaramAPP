@@ -4,15 +4,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.regex.Pattern;
 
 /**
  * Created by Suhyun on 2015-12-11.
@@ -31,18 +26,20 @@ public class ParseSen {
     static int TIME_LUNCH = 1;
     static int TIME_DINNER = 2;
     int mm, ay;
+    int lastday;
 
     ParseSen(ParseCallBack event) {
 
         callbackEvent = event;
 
-        check = new boolean[31];
+        check = new boolean[33];
         menu_d = new String[1000];
         menu_l = new String[1000];
-        for(int i=0;i<31;i++) {
+        for(int i=0;i<=31;i++) {
            check[i] = false;
             menu_d[i]=menu_l[i]="";
         }
+        lastday = -1;
 
     }
 
@@ -55,14 +52,30 @@ public class ParseSen {
     public boolean isMenuExist(int d){
         return check[d];
     }
-    public String getMenu(int d){
+    private void setCheck(int d){
+        check[d]=true;
+
+        if(d>lastday){
+            lastday = d;
+        }
+    }
+    public int getLastday(){
+        return lastday;
+    }
+    public String getLunch(int d){
         if(isMenuExist(d)) {
             // 원하는 꼴로 수정하셈 (menu_l[날짜] = 점심 메뉴 menu_d[날짜] = 저녁메뉴
-            return "점심 : " + menu_l[d] + "저녁 : " + menu_d[d];
+//            return "점심 : " + menu_l[d] + "저녁 : " + menu_d[d];
+            return menu_l[d];
         }
         else return PARSE_ERROR;
-
-
+    }
+    public String getDinner(int d){
+        if(isMenuExist(d)) {
+            // 원하는 꼴로 수정하셈 (menu_l[날짜] = 점심 메뉴 menu_d[날짜] = 저녁메뉴
+            return menu_d[d];
+        }
+        else return PARSE_ERROR;
     }
     public void parse(){
         Thread myThread = new Thread(new Runnable() {
@@ -79,8 +92,6 @@ public class ParseSen {
                 HttpURLConnection conn; // The actual connection to the web page
                 BufferedReader rd; // Used to read results from the web page
                 String line; // An individual line of the web page HTML
-                String result = ""; // A long string containing all the HTML
-
 
                 try {
                     url = new URL(urlToRead);
@@ -113,16 +124,16 @@ public class ParseSen {
                                     menu_l[d] = line.substring(line.indexOf("[중식]") + "[중식]".length(), line.indexOf("[석식]"));
                                     menu_d[d] = line.substring(line.indexOf("[석식]") + "[석식]".length(), line.length());
 
-                                    check[d] = true;
+                                    setCheck(d);
                                 }
                                 else{ // only 점심
                                     menu_l[d] = line.substring(line.indexOf("[중식]") + "[중식]".length(), line.length());
-                                    check[d] = true;
+                                    setCheck(d);
                                 }
                             }
                             else if(line.contains("[석식]")){ // only 저녁
                                 menu_d[d] = line.substring(line.indexOf("[석식]") + "[석식]".length(), line.length());
-                                check[d] = true;
+                                setCheck(d);
                             }
                         }
                     }
@@ -145,4 +156,10 @@ public class ParseSen {
         ay =y;
     }
 
+    int getMonth(){
+        return mm;
+    }
+    int getYear(){
+        return ay;
+    }
 }
