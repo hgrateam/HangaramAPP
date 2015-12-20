@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\res\\merged\\release\\drawable\\mdtp_material_button_selected.xml",
+        "source": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\drawable\\mdtp_material_button_selected.xml"
+    },
+    {
+        "merged": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\res\\merged\\release\\drawable\\mdtp_material_button_background.xml",
+        "source": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\drawable\\mdtp_material_button_background.xml"
+    },
+    {
+        "merged": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\res\\merged\\release\\drawable\\mdtp_done_background_color.xml",
+        "source": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\drawable\\mdtp_done_background_color.xml"
+    },
+    {
+        "merged": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\res\\merged\\release\\drawable\\mdtp_done_background_color_dark.xml",
+        "source": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\drawable\\mdtp_done_background_color_dark.xml"
+    }
+]

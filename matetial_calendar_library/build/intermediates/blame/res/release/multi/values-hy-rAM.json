@@ -1,0 +1,216 @@
+[
+    {
+        "outputFile": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\res\\merged\\release\\values-hy-rAM\\values-hy-rAM.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 105,
+                    "endColumn": 113,
+                    "endOffset": 214
+                },
+                "from": {
+                    "file": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\values-hy-rAM\\strings.xml",
+                    "position": {
+                        "startLine": 24,
+                        "startColumn": 4,
+                        "startOffset": 1342,
+                        "endColumn": 113,
+                        "endOffset": 1451
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 219,
+                    "endColumn": 110,
+                    "endOffset": 325
+                },
+                "from": {
+                    "file": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\values-hy-rAM\\strings.xml",
+                    "position": {
+                        "startLine": 29,
+                        "startColumn": 4,
+                        "startOffset": 1867,
+                        "endColumn": 114,
+                        "endOffset": 1977
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 330,
+                    "endColumn": 84,
+                    "endOffset": 410
+                },
+                "from": {
+                    "file": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\values-hy-rAM\\strings.xml",
+                    "position": {
+                        "startLine": 19,
+                        "startColumn": 4,
+                        "startOffset": 828,
+                        "endColumn": 84,
+                        "endOffset": 908
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 5,
+                    "startColumn": 4,
+                    "startOffset": 415,
+                    "endColumn": 117,
+                    "endOffset": 528
+                },
+                "from": {
+                    "file": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\values-hy-rAM\\strings.xml",
+                    "position": {
+                        "startLine": 20,
+                        "startColumn": 4,
+                        "startOffset": 914,
+                        "endColumn": 117,
+                        "endOffset": 1027
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 6,
+                    "startColumn": 4,
+                    "startOffset": 533,
+                    "endColumn": 117,
+                    "endOffset": 646
+                },
+                "from": {
+                    "file": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\values-hy-rAM\\strings.xml",
+                    "position": {
+                        "startLine": 28,
+                        "startColumn": 4,
+                        "startOffset": 1744,
+                        "endColumn": 121,
+                        "endOffset": 1861
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 7,
+                    "startColumn": 4,
+                    "startOffset": 651,
+                    "endColumn": 121,
+                    "endOffset": 768
+                },
+                "from": {
+                    "file": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\values-hy-rAM\\strings.xml",
+                    "position": {
+                        "startLine": 21,
+                        "startColumn": 4,
+                        "startOffset": 1033,
+                        "endColumn": 121,
+                        "endOffset": 1150
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 8,
+                    "startColumn": 4,
+                    "startOffset": 773,
+                    "endColumn": 93,
+                    "endOffset": 862
+                },
+                "from": {
+                    "file": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\values-hy-rAM\\strings.xml",
+                    "position": {
+                        "startLine": 26,
+                        "startColumn": 4,
+                        "startOffset": 1560,
+                        "endColumn": 93,
+                        "endOffset": 1649
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 9,
+                    "startColumn": 4,
+                    "startOffset": 867,
+                    "endColumn": 89,
+                    "endOffset": 952
+                },
+                "from": {
+                    "file": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\values-hy-rAM\\strings.xml",
+                    "position": {
+                        "startLine": 22,
+                        "startColumn": 4,
+                        "startOffset": 1156,
+                        "endColumn": 89,
+                        "endOffset": 1241
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 10,
+                    "startColumn": 4,
+                    "startOffset": 957,
+                    "endColumn": 93,
+                    "endOffset": 1046
+                },
+                "from": {
+                    "file": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\values-hy-rAM\\strings.xml",
+                    "position": {
+                        "startLine": 23,
+                        "startColumn": 4,
+                        "startOffset": 1247,
+                        "endColumn": 93,
+                        "endOffset": 1336
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 11,
+                    "startColumn": 4,
+                    "startOffset": 1051,
+                    "endColumn": 87,
+                    "endOffset": 1134
+                },
+                "from": {
+                    "file": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\values-hy-rAM\\strings.xml",
+                    "position": {
+                        "startLine": 27,
+                        "startColumn": 4,
+                        "startOffset": 1655,
+                        "endColumn": 87,
+                        "endOffset": 1738
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 12,
+                    "startColumn": 4,
+                    "startOffset": 1139,
+                    "endColumn": 101,
+                    "endOffset": 1236
+                },
+                "from": {
+                    "file": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\src\\main\\res\\values-hy-rAM\\strings.xml",
+                    "position": {
+                        "startLine": 25,
+                        "startColumn": 4,
+                        "startOffset": 1457,
+                        "endColumn": 101,
+                        "endOffset": 1554
+                    }
+                }
+            }
+        ]
+    }
+]
