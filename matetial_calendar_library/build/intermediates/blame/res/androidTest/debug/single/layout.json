@@ -12,12 +12,12 @@
         "source": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\bundles\\debug\\res\\layout\\mdtp_date_picker_selected_date.xml"
     },
     {
-        "merged": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\mdtp_time_header_label.xml",
-        "source": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\bundles\\debug\\res\\layout\\mdtp_time_header_label.xml"
-    },
-    {
         "merged": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\mdtp_date_picker_view_animator.xml",
         "source": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\bundles\\debug\\res\\layout\\mdtp_date_picker_view_animator.xml"
+    },
+    {
+        "merged": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\mdtp_time_header_label.xml",
+        "source": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\bundles\\debug\\res\\layout\\mdtp_time_header_label.xml"
     },
     {
         "merged": "C:\\Android_Projects\\HangaramAPP\\matetial_calendar_library\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\mdtp_date_picker_dialog.xml",

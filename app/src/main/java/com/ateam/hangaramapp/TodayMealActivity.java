@@ -10,6 +10,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import java.util.Calendar;
+import com.squareup.timessquare.CalendarPickerView;
+import java.util.Date;
 import android.widget.Toast;
 
 public class TodayMealActivity extends AppCompatActivity {
@@ -106,9 +109,17 @@ public class TodayMealActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
-
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
+
+
+        Calendar nextYear = Calendar.getInstance();
+        nextYear.add(Calendar.YEAR, 1);
+
+        CalendarPickerView calendar = (CalendarPickerView) findViewById(R.id.calendar_view);
+        Date today = new Date();
+        calendar.init(today, nextYear.getTime())
+                .withSelectedDate(today);
 
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
