@@ -37,7 +37,6 @@ public class ParseCal {
         for(int i=0;i<31;i++) {
             check[i] = false;
         }
-
     }
 
     Handler handler = new Handler() {

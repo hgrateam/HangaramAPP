@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 /**
  * Created by Suhyun on 2015-12-11.
@@ -25,16 +26,22 @@ public class ParseSen {
     static String PARSE_ERROR = "정보가 존재하지 않습니다.";
     static int TIME_LUNCH = 1;
     static int TIME_DINNER = 2;
+
+    public static int ERR_NO_ERROR = 3;
+    public static int ERR_NET_ERROR = 4;
+
+    private boolean isFirst;
+    int error_code;
     int mm, ay;
     int lastday;
 
     ParseSen(ParseCallBack event) {
 
         callbackEvent = event;
-
         check = new boolean[33];
         menu_d = new String[1000];
         menu_l = new String[1000];
+        isFirst = false;
         for(int i=0;i<=31;i++) {
            check[i] = false;
             menu_d[i]=menu_l[i]="";
@@ -49,6 +56,10 @@ public class ParseSen {
             callbackEvent.callbackMethod(ParseSen.this);
         }
     };
+
+    public void setIsFirst(boolean a){  isFirst = a;    };
+    public boolean getIsFirst(){ return isFirst;}
+    public int getErrorCode(){ return error_code;}
     public boolean isMenuExist(int d){
         return check[d];
     }
@@ -83,6 +94,7 @@ public class ParseSen {
                 String urlToRead="http://hes.sen.go.kr/spr_sci_md00_001.do?";
                 urlToRead+="mm="+mm;
                 urlToRead+="&ay="+ay;
+                error_code = ERR_NO_ERROR;
                 int time = 0;
                 urlToRead+="&schulCode=B100000549&schulCrseScCode=4";
 
@@ -141,12 +153,21 @@ public class ParseSen {
 
                     handler.sendMessage(handler.obtainMessage());
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                }catch (UnknownHostException e) {
+                    Log.i("info", "네트워크 에러! in ParseSen");
+                    lastday = -1;
+                    error_code = ERR_NET_ERROR;
+                    System.out.println("Check Internet Connection!!!");
+                    handler.sendMessage(handler.obtainMessage());
+                } catch (Exception ex) {
+                    Log.i("info", "네트워크 에러! in ParseSen");
+                    error_code = ERR_NET_ERROR;
+                    lastday = -1;
+                    ex.printStackTrace();
+                    handler.sendMessage(handler.obtainMessage());
                 }
             }
         });
-
         myThread.start();
     }
     void setMM(int m){

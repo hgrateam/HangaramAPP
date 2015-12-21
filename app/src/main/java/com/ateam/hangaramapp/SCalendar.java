@@ -49,49 +49,5 @@ public class SCalendar extends AppCompatActivity{
         parsecal.parse();
 
         month --;
-
-        Log.i("info", "MONTH = " + month + ", YEAR = " + year);
-
-        cal.set(year, month, 1);
-        int day_of_week = cal.get(Calendar.DAY_OF_WEEK);
-        title.setText(year+"년 "+month+"월");
-
-
-        System.out.println(day_of_week);
-
-        int dayCnt=-1;
-        int doM[]={0,31,28,31,30,31,30,31,31,30,31,30,31};
-        String noD[]={"일","월","화","수","목","금","토"};
-
-        boolean flag = false;
-
-        for(int i=0;dayCnt<doM[month];i++){
-            TableRow tr = new TableRow(this);
-            tr.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-
-            for(int j=0;j<7;j++) {
-                TextView a = new TextView(this);
-                if(dayCnt==-1) {
-                    a.setText(""+noD[j]);
-                    if(j==6)
-                        dayCnt=0;
-                }
-                else {
-                    if (dayCnt < 7 && !flag) {
-                        if (day_of_week-1 == j)
-                            flag = true;
-                    }
-                    if (flag && dayCnt<=doM[month])
-                        a.setText("" + ++dayCnt);
-                    else
-                        a.setText("");
-                }
-
-                a.setLayoutParams(new TableRow.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
-                a.setGravity(Gravity.CENTER);
-                tr.addView(a);
-            }
-            ty.addView(tr, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
-        }
     }
 }
