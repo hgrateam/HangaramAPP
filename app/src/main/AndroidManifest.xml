@@ -32,7 +32,15 @@
                 android:value="com.ateam.hangaramapp.MainActivity" />
             >
         </activity>
-        <activity android:name=".SCalendar"></activity>
+        <activity android:name=".SCalendar" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ateam.hangaramapp.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

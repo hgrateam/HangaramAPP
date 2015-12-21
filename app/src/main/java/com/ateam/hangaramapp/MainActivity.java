@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity
         return y*10000+m*100+d;
     }
 
+    Context mContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
-        final Context mContext = getApplicationContext();
+        mContext = getApplicationContext();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +136,9 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(mContext, SettingsActivity.class);
+            //설정으로 진입한다.
+            startActivity(intent);
             return true;
         }
 
