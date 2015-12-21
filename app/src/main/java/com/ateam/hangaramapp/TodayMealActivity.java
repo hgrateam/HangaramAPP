@@ -219,7 +219,7 @@ public class TodayMealActivity extends AppCompatActivity {
     private void drawCalendar(){
         int[] dateBundle = getDateRange();
 
-        //
+        //급식 캘린더의 시작 날짜를 초기화한다.
         int startYear = dateBundle[0] / 10000;
         int startMonth = ((dateBundle[0] % 10000) / 100);
         int startDay = dateBundle[0] % 100;
@@ -237,6 +237,7 @@ public class TodayMealActivity extends AppCompatActivity {
         Log.i("info", "오늘의 날짜 : "+t_year +"/"+ t_month +"/"+ t_day);
         Log.i("info", "startYear = " + startYear + " 입니다.");
 
+        //급식 캘린더의 끝 날짜를 초기화한다.
         int endYear = dateBundle[1] / 10000;
         int endMonth = ((dateBundle[1] % 10000) / 100);
         int endDay = dateBundle[1] % 100;
@@ -248,6 +249,7 @@ public class TodayMealActivity extends AppCompatActivity {
         Date today = new Date();
         calendar.init(calStart.getTime(), calEnd.getTime());
 
+        //오늘 날짜를 선택한다. 달력의 날짜범위안에 오늘이 포함되어있지 않을경우 날짜를 선택하지 않는다.
         try {
             calendar.selectDate(today);
         }catch (IllegalArgumentException exception){
