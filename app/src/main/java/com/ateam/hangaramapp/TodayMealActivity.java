@@ -330,7 +330,7 @@ public class TodayMealActivity extends AppCompatActivity {
     private void drawCalendar(){
         int[] dateBundle = getDateRange();
 
-        //
+        //급식 캘린더의 시작 날짜를 초기화한다.
         int startYear = intToYear(dateBundle[0]);
         int startMonth = intToMonth(dateBundle[0]);
         int startDay = intToDay(dateBundle[0]);
@@ -348,6 +348,7 @@ public class TodayMealActivity extends AppCompatActivity {
         Log.i("info", "오늘의 날짜 : "+t_year +"/"+ t_month +"/"+ t_day);
         Log.i("info", "startYear = " + startYear + " 입니다.");
 
+        //급식 캘린더의 끝 날짜를 초기화한다.
         int endYear = intToYear(dateBundle[1]);
         int endMonth = intToMonth(dateBundle[1]);
         int endDay = intToDay(dateBundle[1]);
@@ -356,12 +357,12 @@ public class TodayMealActivity extends AppCompatActivity {
         calEnd.set(endYear, --endMonth, ++endDay);
 
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
-
         calendar.init(calStart.getTime(), calEnd.getTime());
 
         calendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
             @Override
             public void onDateSelected(Date date) {
+                // public void setText(date)참조;
                 setText(date);
             }
             @Override
