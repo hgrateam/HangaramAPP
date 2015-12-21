@@ -1,1 +1,1 @@
-include ':app', ':matetial_calendar_library'
+include ':app'

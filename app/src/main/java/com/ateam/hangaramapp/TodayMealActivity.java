@@ -19,6 +19,7 @@ public class TodayMealActivity extends AppCompatActivity {
 
     Button button1;
     ProgressDialog progDialog;
+    int startDate = 0, endDate = 0; //날짜 초기화
     ParseCallBack callbackEvent = new ParseCallBack() {
 
         @Override
@@ -41,13 +42,13 @@ public class TodayMealActivity extends AppCompatActivity {
             int date;
             while(cursor.moveToNext()) {
                 date = cursor.getInt(1);
-                str += cursor.getInt(0)
+                str += cursor.getInt(0) //id값; 신경 안써도 됨
                         + " : date "
-                        + cursor.getInt(1)
+                        + cursor.getInt(1) //날짜
                         + ", lunch = "
-                        + cursor.getString(2)
+                        + cursor.getString(2) //점심
                         + ", dinner = "
-                        + cursor.getString(3)
+                        + cursor.getString(3)  //저녁
                         + "\n";
                 if(cursor.getInt(1) > dbLastday) {
                     dbLastday = date;
@@ -112,13 +113,25 @@ public class TodayMealActivity extends AppCompatActivity {
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
 
+        int[] dateBundle = getDateRange();
 
-        Calendar nextYear = Calendar.getInstance();
-        nextYear.add(Calendar.YEAR, 1);
+        int startYear = dateBundle[0]/10000;
+        int startMonth = ((dateBundle[0]%10000)/100);
+        int startDay = dateBundle[0]%100;
+        Calendar calStart = Calendar.getInstance();
+        calStart.set(startYear, startMonth-1, startDay);
+        Log.i("info", "startYear = " + startYear + " 입니다.");
 
+        int endYear = dateBundle[1]/10000;
+        int endMonth = ((dateBundle[0]%10000)/100);
+        int endDay = dateBundle[1]%100;
+        Calendar calEnd = Calendar.getInstance();
+        calEnd.set(endYear, endMonth-1, endDay+1);
+
+        //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
         CalendarPickerView calendar = (CalendarPickerView) findViewById(R.id.calendar_view);
         Date today = new Date();
-        calendar.init(today, nextYear.getTime())
+        calendar.init(calStart.getTime(), calEnd.getTime())
                 .withSelectedDate(today);
 
         button1.setOnClickListener(new View.OnClickListener() {
@@ -138,4 +151,35 @@ public class TodayMealActivity extends AppCompatActivity {
             }
         });
     }
+
+    public int[] getDateRange(){
+
+        DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null,1);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
+
+        int focusedDate;
+       while(cursor.moveToNext()) {
+            focusedDate = cursor.getInt(1);
+            if(startDate == 0){
+                startDate = focusedDate; //시작날짜에 포커스값 대입
+            }
+            else if(endDate == 0){
+                endDate = focusedDate; //끝날짜에 포커스값 대입
+            }
+            else{
+                if (focusedDate < startDate) {
+                    startDate = focusedDate; //시작날짜를 더 이전날짜가 존재하면 변경
+                }
+                if(focusedDate > endDate){
+                    endDate = focusedDate; //끝날짜를 더 나중날짜가 존재하면 변경
+                }
+            }
+        }
+        Log.i("info", "startDate = "+startDate + " 입니다. \n endDate = "+endDate + " 입니다.");
+
+        int[] dateBundle = {startDate, endDate};
+        return(dateBundle);
+    }
+
 }
