@@ -191,7 +191,7 @@ public class TodayMealActivity extends AppCompatActivity {
 
         schedule = (TextView) findViewById(R.id.schedule_today_meal);
         calendar = (CalendarPickerView) findViewById(R.id.calendar_view);
-        mealinfo = new MealInfo();
+        mealinfo = new MealInfo(this);
 
         dbCheck = new boolean[33];
 
@@ -272,11 +272,12 @@ public class TodayMealActivity extends AppCompatActivity {
 
         mealinfo.resetMeal();
         calendar.clearHighlightedDates();
-
         while (cursor.moveToNext()) {
             date = cursor.getInt(1);
             if(startDate <= date && date <= endDate) {
-                mealinfo.add(cursor.getInt(1), "[중식]\n" + cursor.getString(2) + "\n\n" + "[석식]\n" + cursor.getString(3));
+                mealinfo.setTemplate(intToYear(date)+"년 "+intToMonth(date)+"월 "+ intToDay(date)+"일\n [중식]\n!lunch!\n\n[저녁]\n!dinner!");
+                mealinfo.add(cursor.getInt(1), cursor.getString(2), cursor.getString(3));
+//                mealinfo.add(cursor.getInt(1), "[중식]\n" + cursor.getString(2) + "\n\n" + "[석식]\n" + cursor.getString(3));
 
                 Date date2 = new Date();
                 date2.setYear(intToYear(date) - 1900);
@@ -290,7 +291,6 @@ public class TodayMealActivity extends AppCompatActivity {
             }
         }
         calendar.highlightDates(highdates);
-
         // 오늘 날짜를 선택한다.
         try {
             calendar.selectDate(today);
@@ -311,16 +311,13 @@ public class TodayMealActivity extends AppCompatActivity {
             // 알레르기 정보를 표기 할것인가?
             // 이건 프리퍼런스에서 변수를 설정한다음에 그 후에 처리하기
             if(false){
+                schedule.setText(str);
 
             }
             else {
                 //①난류 ②우유 ③메밀 ④땅콩 ⑤대두 ⑥밀 ⑦고등어 ⑧게 ⑨새우 ⑩돼지고기 ⑪복숭아 ⑫토마토 ⑬아황산염
-                String allergiesym[] = {"①","②","③", "④", "⑤", "⑥", "⑦","⑧","⑨","⑩","⑪","⑫","⑬"};
-                for(int i=0;i<allergiesym.length;i++){
-                    str = str.replaceAll(allergiesym[i],"");
-                }
+                schedule.setText(mealinfo.removeAllergie(str));
             }
-            schedule.setText(str);
         }
         else{
             schedule.setText(MSG_NO_MEAL);

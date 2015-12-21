@@ -18,15 +18,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public int dateToInt(Date date){
+        return ymdToInt(date.getYear()+1900,date.getMonth()+1, date.getDate());
+    }
+    public int ymdToInt(int y, int m, int d){
+        return y*10000+m*100+d;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+
         setSupportActionBar(toolbar);
 
         final Context mContext = getApplicationContext();
@@ -41,6 +52,8 @@ public class MainActivity extends AppCompatActivity
         });
 
         CardView cardView = (CardView) findViewById(R.id.card_today_meal);
+
+
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +81,27 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        MealInfo mealinfo = new MealInfo(this);
+        Date today = new Date();
+
+        mealinfo.setTemplate("<오늘의 급식>\n"+(today.getYear()+1900)+"년 "+(today.getMonth()+1)+"월 "+ today.getDate()+"일\n\n [중식]\n!lunch!\n\n[저녁]\n!dinner!");
+        mealinfo.acesssDB();
+
+        TextView today_meal = (TextView) findViewById(R.id.today_meal);
+
+        if(mealinfo.isMealExist(dateToInt(today))){
+            today_meal.setTextSize(15);
+            today_meal.setText(mealinfo.removeAllergie(mealinfo.getData(dateToInt(today))));
+        }
+        else{
+            today_meal.setTextSize(18);
+            today_meal.setText("오늘의 급식");
+        }
+
+
+
+
     }
 
 
