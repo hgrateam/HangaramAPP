@@ -66,11 +66,13 @@
         android:stateListAnimator="@anim/card_elevation">
 
         <TextView
-            android:id="@+id/schedule"
+            android:id="@+id/schedule_today_meal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="7dp"
             android:layout_gravity="center"
-            android:textSize="20sp"
+            android:gravity="center"
+            android:textSize="18sp"
             android:text="오늘의 급식이 표시되는 공간입니다."/>
 
     </android.support.v7.widget.CardView>
