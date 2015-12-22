@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">한가람앱</string>
-    <string name="action_settings">설정</string>
     <string name="title_activity_main">한가람앱</string>
+    <string name="action_help">도움말</string>
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
@@ -11,9 +11,9 @@
     <string name="navigation_drawer_menu_today_meal">오늘의 급식</string>
     <string name="navigation_drawer_menu_school_menu">학교 메뉴</string>
     <string name="navigation_drawer_menu_school_life">학교 생활</string>
+    <string name="navigation_drawer_menu_settings">설정</string>
 
     <string name="todal_meal_button1">누르고 싶지? 헤헤</string>
-    <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
 

@@ -14,14 +14,21 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import java.util.List;
 
@@ -172,6 +179,45 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        AppBarLayout appBarLayout;
+        Toolbar bar;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
+            appBarLayout = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.app_bar_settings, root, false);
+            root.addView(appBarLayout, 0); // insert at top
+            bar = (Toolbar)  findViewById(R.id.toolbar_settings);
+        }
+        else{
+
+            ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
+            ListView content = (ListView) root.getChildAt(0);
+
+            root.removeAllViews();
+
+            appBarLayout = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.app_bar_settings, root, false);
+
+            int height;
+            TypedValue tv = new TypedValue();
+            if (getTheme().resolveAttribute(R.attr.actionBarSize, tv, true)) {
+                height = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+            }else{
+                height = appBarLayout.getHeight();
+            }
+
+            content.setPadding(0, height, 0, 0);
+
+            root.addView(content);
+            root.addView(appBarLayout);
+            bar = (Toolbar)  findViewById(R.id.toolbar_settings);
+        }
+
+        bar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         setupSimplePreferencesScreen();
     }

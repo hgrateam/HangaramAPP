@@ -152,10 +152,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(mContext, SettingsActivity.class);
-            //설정으로 진입한다.
-            startActivity(intent);
+        if (id == R.id.action_help) {
             return true;
         }
 
@@ -174,7 +171,11 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_settings) {
+            item.setCheckable(false);
+            Intent intent = new Intent(mContext, SettingsActivity.class);
+            //설정으로 진입한다.
+            startActivity(intent);
 
         } else if (id == R.id.nav_share) {
 
