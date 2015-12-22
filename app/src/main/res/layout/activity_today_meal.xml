@@ -59,6 +59,7 @@
         android:layout_height="200dp"
         android:layout_margin="8dp"
         android:clickable="true"
+        android:transitionName="@string/transition_name_today_meal_card"
         android:foreground="?selectableItemBackground"
         card_view:cardCornerRadius="4dp"
         android:layout_alignParentBottom="true"
@@ -71,6 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="7dp"
             android:layout_gravity="center"
+            android:transitionName="@string/transition_name_today_meal_text"
             android:gravity="center"
             android:textSize="18sp"
             android:text="오늘의 급식이 표시되는 공간입니다."/>

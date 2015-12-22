@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -60,8 +63,20 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, TodayMealActivity.class);
+
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        // the context of the activity
+                        MainActivity.this,
+                        // For each shared element, add to this method a new Pair item,
+                        // which contains the reference of the view we are transitioning *from*,
+                        // and the value of the transitionName attribute
+                        new Pair<View, String>(v.findViewById(R.id.card_today_meal),
+                                getString(R.string.transition_name_today_meal_card)),
+                        new Pair<View, String>(v.findViewById(R.id.text_today_meal),
+                                getString(R.string.transition_name_today_meal_text))
+                );
                 //오늘의 급식으로 진입한다.
-                startActivity(intent);
+                ActivityCompat.startActivity(MainActivity.this, intent, options.toBundle());
             }
         });
 
@@ -70,7 +85,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, SCalendar.class);
-                //오늘의 급식으로 진입한다.
+
+
+                //학사 일정으로 진입한다.
                 startActivity(intent);
             }
         });
@@ -90,7 +107,7 @@ public class MainActivity extends AppCompatActivity
         mealinfo.setTemplate("<오늘의 급식>\n"+(today.getYear()+1900)+"년 "+(today.getMonth()+1)+"월 "+ today.getDate()+"일\n\n [중식]\n!lunch!\n\n[저녁]\n!dinner!");
         mealinfo.acesssDB();
 
-        TextView today_meal = (TextView) findViewById(R.id.today_meal);
+        TextView today_meal = (TextView) findViewById(R.id.text_today_meal);
 
         if(mealinfo.isMealExist(dateToInt(today))){
             today_meal.setTextSize(15);
