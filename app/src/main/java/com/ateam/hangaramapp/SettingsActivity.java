@@ -235,11 +235,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // In the simplified UI, fragments are not used at all and we instead
         // use the older PreferenceActivity APIs.
 
-        // Add 'general' preferences.
-        addPreferencesFromResource(R.xml.pref_general);
+        // Add container.
+        addPreferencesFromResource(R.xml.pref_container);
+
+        // Add 'today meal' preferences, and a corresponding header.
+        PreferenceCategory fakeHeader = new PreferenceCategory(this);
+        fakeHeader.setTitle(R.string.pref_header_today_meal);
+        // Add 'today meal' preferences.
+        addPreferencesFromResource(R.xml.pref_today_meal);
 
         // Add 'notifications' preferences, and a corresponding header.
-        PreferenceCategory fakeHeader = new PreferenceCategory(this);
+        fakeHeader = new PreferenceCategory(this);
         fakeHeader.setTitle(R.string.pref_header_notifications);
         getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_notification);
@@ -284,21 +290,37 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
-                || GeneralPreferenceFragment.class.getName().equals(fragmentName)
+                || PreferenceContainerFragment.class.getName().equals(fragmentName)
+                || TodayMealPreferenceFragment.class.getName().equals(fragmentName)
                 || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName);
     }
 
-    /**
-     * This fragment shows general preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends PreferenceFragment {
+    public static class PreferenceContainerFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_general);
+
+            // Add container.
+            addPreferencesFromResource(R.xml.pref_container);
+
+            //TODO:이 첫번째 헤더를 표시하기 위한 해결책은 임시방편이므로 제대로된 해결책을 찾기 전까지는 불안정할 수 있다.
+            //그런데 왜 해결이 안될까 ㅋㅋㅋㅋㅋㅋ 젠장 다음으로 미룬다.
+        }
+    }
+
+    /**
+     * This fragment shows today meal preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class TodayMealPreferenceFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            addPreferencesFromResource(R.xml.pref_today_meal);
             setHasOptionsMenu(true);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
