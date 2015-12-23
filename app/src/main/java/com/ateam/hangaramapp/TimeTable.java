@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class TimeTable extends AppCompatActivity{
 
-    private String subjects_name[]={"소환사의 협곡","수학","물리","잘 찍기","영어","하핫","룰루 랄라", "뻐킹 생명과학", "으쓱 으쓱", "하스스톤", "워크래프트의 영웅들", "자바2", "피곤행", "당첨!", "읎다"};
+    private String subjects_name[]={"소환사의 협곡","수학","물리","잘 찍기","영어","하핫","룰루 랄라", "뻐킹 생명과학", "으쓱 으쓱", "하스스톤", "워크래프트의 영웅들", "자바2", "피곤행", "당첨!", "읎다", "어맛!"};
     private int text_color[];
     private int foreground_color[];
 
