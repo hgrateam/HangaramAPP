@@ -23,6 +23,7 @@ public class SubjectContainer extends View{
     private int heightSize = 0;
     private int widthSize = 0;
 
+    private boolean highlightedCell[];
     public interface OnSubjectListener{
         void onSubjectSelected(int sn);
     }
@@ -45,14 +46,29 @@ public class SubjectContainer extends View{
         foreColor = new int[SIZE];
         className = new String[SIZE];
 
+
         startx = new float[SIZE];
         endx = new float[SIZE];
         starty = new float[SIZE];
         endy = new float[SIZE];
+
+        highlightedCell = new boolean [SIZE];
+        resetHighlights();
         cnt=0;
     }
 
 
+    public void resetHighlights(){
+        for(int i=0;i<SIZE;i++)
+            highlightedCell[i]=false;
+    }
+
+    public void setHighlight(int sn){
+        highlightedCell[sn]= true;
+    }
+    public void removeHighlight(int sn){
+        highlightedCell[sn]= false;
+    }
     public SubjectContainer(Context context) {
         super(context);
         resetVar();
@@ -114,7 +130,10 @@ public class SubjectContainer extends View{
                 }
                 p.setTextSize(35);
 
-                p.setColor(foreColor[blockCnt]);
+                if(highlightedCell[blockCnt]) {
+                    p.setColor(Color.parseColor("#90CAF9"));
+                }
+                else p.setColor(foreColor[blockCnt]);
                 p.setStyle(Paint.Style.FILL);
 
                 startx[blockCnt] = j*block_width;
@@ -145,8 +164,6 @@ public class SubjectContainer extends View{
 
     public void redraw()
     {
-//        Log.i("info","redraw - "+(cnt%divideN ==0 ? cnt/divideN:(cnt/divideN)+1)*block_height);
-//        setMeasuredDimension(widthSize, (cnt%divideN ==0 ? cnt/divideN:(cnt/divideN)+1)*block_height);
         invalidate();
     }
     @Override
@@ -163,7 +180,7 @@ public class SubjectContainer extends View{
                 heightSize = heightMeasureSpec;
                 break;
             case MeasureSpec.AT_MOST:        // wrap_content (뷰 내부의 크기에 따라 크기가 달라짐)
-                heightSize = (int)(block_height*(6));
+                heightSize = (int)(block_height*(8));
                 break;
             case MeasureSpec.EXACTLY:        // fill_parent, match_parent (외부에서 이미 크기가 지정되었음)
                 heightSize = MeasureSpec.getSize(heightMeasureSpec);
