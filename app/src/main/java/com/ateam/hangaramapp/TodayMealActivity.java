@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 public class TodayMealActivity extends AppCompatActivity {
 
+
     private ProgressDialog progDialog;
     private CalendarPickerView calendar;
     private TextView schedule;
@@ -44,9 +45,6 @@ public class TodayMealActivity extends AppCompatActivity {
     private static String MSG_ALREADY_EXISTS = "이미 최신 정보입니다.";
     private static String MSG_UPDATE="최신 정보를 갱신하였습니다.";
     private static String MSG_NO_MEAL="해당 날짜의 급식 정보가 없습니다.";
-
-
-
 
     public int intToYear(int d){
         return d/10000;

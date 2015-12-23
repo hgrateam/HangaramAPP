@@ -15,7 +15,6 @@ import java.net.UnknownHostException;
  */
 public class ParseSen {
 
-
     private ParseCallBack callbackEvent;
 
 

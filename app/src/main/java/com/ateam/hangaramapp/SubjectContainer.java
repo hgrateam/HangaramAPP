@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 /**
  * Created by hyun ji on 2015-12-23.
@@ -14,13 +16,24 @@ import android.view.View;
 public class SubjectContainer extends View{
 
     private static int SIZE = 100;
+    int size;
     private static int block_height = 150;
     private static int divideN = 3;
 
     private int heightSize = 0;
     private int widthSize = 0;
 
+    public interface OnSubjectListener{
+        void onSubjectSelected(int sn);
+    }
+    public void setSubjectListener(OnSubjectListener listener){
+        subjectListener = listener;
+    }
+    private OnSubjectListener subjectListener;
+
+
     private int cnt=0;
+    int column;
     private String className[];
     private int textColor[], foreColor[];
 
@@ -31,12 +44,15 @@ public class SubjectContainer extends View{
         textColor = new int[SIZE];
         foreColor = new int[SIZE];
         className = new String[SIZE];
+
         startx = new float[SIZE];
         endx = new float[SIZE];
         starty = new float[SIZE];
         endy = new float[SIZE];
         cnt=0;
     }
+
+
     public SubjectContainer(Context context) {
         super(context);
         resetVar();
@@ -56,6 +72,21 @@ public class SubjectContainer extends View{
     public SubjectContainer(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         resetVar();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float px = event.getX();
+        float py = event.getY();
+        for(int i=0;i<cnt;i++){
+            if(startx[i] <= px && px < endx[i]){
+                if(starty[i] <= py && py < endy[i]){
+                    subjectListener.onSubjectSelected(i);
+                    break;
+                }
+            }
+        }
+        return super.onTouchEvent(event);
     }
 
     @Override
@@ -85,13 +116,21 @@ public class SubjectContainer extends View{
 
                 p.setColor(foreColor[blockCnt]);
                 p.setStyle(Paint.Style.FILL);
-                canvas.drawRect(j * block_width, i * block_height, (j + 1) * block_width, (i + 1) * block_height, p);
+
+                startx[blockCnt] = j*block_width;
+                starty[blockCnt] = i*block_height;
+                endx[blockCnt] = (j+1)*block_width;
+                endy[blockCnt] = (i+1)*block_height;
+
+                canvas.drawRect(startx[blockCnt], starty[blockCnt], endx[blockCnt], endy[blockCnt],p);
 
                 p.setColor(Color.BLACK);
                 p.setStyle(Paint.Style.STROKE);
-                canvas.drawRect(j * block_width, i * block_height, (j + 1) * block_width, (i + 1) * block_height, p);
+
+                canvas.drawRect(startx[blockCnt], starty[blockCnt], endx[blockCnt], endy[blockCnt],p);
 
                 p.setColor(textColor[blockCnt]);
+
                 canvas.drawText(className[blockCnt],(j+0.5f)*block_width,(i + 0.5f) * block_height,p);
             }
         }
@@ -104,7 +143,10 @@ public class SubjectContainer extends View{
         cnt++;
     }
 
-    public void redraw(){
+    public void redraw()
+    {
+//        Log.i("info","redraw - "+(cnt%divideN ==0 ? cnt/divideN:(cnt/divideN)+1)*block_height);
+//        setMeasuredDimension(widthSize, (cnt%divideN ==0 ? cnt/divideN:(cnt/divideN)+1)*block_height);
         invalidate();
     }
     @Override
@@ -121,7 +163,7 @@ public class SubjectContainer extends View{
                 heightSize = heightMeasureSpec;
                 break;
             case MeasureSpec.AT_MOST:        // wrap_content (뷰 내부의 크기에 따라 크기가 달라짐)
-                heightSize = 20;
+                heightSize = (int)(block_height*(6));
                 break;
             case MeasureSpec.EXACTLY:        // fill_parent, match_parent (외부에서 이미 크기가 지정되었음)
                 heightSize = MeasureSpec.getSize(heightMeasureSpec);
@@ -141,10 +183,8 @@ public class SubjectContainer extends View{
                 widthSize = MeasureSpec.getSize(widthMeasureSpec);
                 break;
         }
-
         setMeasuredDimension(widthSize, heightSize);
     }
-
 
     //reference
 

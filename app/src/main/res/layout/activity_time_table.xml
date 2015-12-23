@@ -23,5 +23,16 @@
         android:layout_below="@id/time_table_guide"
         android:layout_width="match_parent"
         android:id="@+id/subject_container"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_below="@id/subject_container"
+        android:id="@+id/subject_selected"
+
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
+        />
+
 </RelativeLayout>
