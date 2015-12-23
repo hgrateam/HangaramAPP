@@ -126,10 +126,6 @@ public class MainActivity extends AppCompatActivity
             today_meal.setTextSize(18);
             today_meal.setText("오늘의 급식");
         }
-
-
-
-
     }
 
 

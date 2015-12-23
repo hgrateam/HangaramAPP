@@ -18,22 +18,14 @@ public class SCalendar extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
-        ParseCallBack callbackEvent = new ParseCallBack() {
 
+        ParseCal parsecal = new ParseCal();
+        parsecal.setCallBackListener(new ParseCal.ParseCallBack() {
             @Override
-            public void callbackMethod(ParseSen a) {
-
+            public void OnFinish(ParseCal a) {
+                // 처리는 여기에
             }
-
-            @Override
-            public void callbackMethod_Cal(ParseCal a) {
-                // ParseSen의 파싱이 끝나면 여기가 호출된다. 이제부터는 getMenu()를 사용할 수 있다.
-                // 여기서부터 처리하고 싶은거 처리하면 됨
-                // 12월 2015년 으로 설정되어있따.
-            }
-        };
-
-        ParseCal parsecal = new ParseCal(callbackEvent);
+        });
 
         TextView title = (TextView) findViewById(R.id.calendar_title);
         Calendar cal = Calendar.getInstance();

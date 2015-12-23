@@ -15,28 +15,35 @@ import java.net.UnknownHostException;
  */
 public class ParseSen {
 
-    private ParseCallBack callbackEvent;
+//    private ParseCallBack callbackEvent;
 
+    public interface ParseCallBack{
+        public void OnFinish(ParseSen a);
+    }
+    ParseCallBack mcallback;
+    public void setCallBackListener(ParseCallBack callback){
+        mcallback = callback;
+    }
 
     String menu_l[];
     String menu_d[];
     boolean check[];
 
-    static String PARSE_ERROR = "정보가 존재하지 않습니다.";
-    static int TIME_LUNCH = 1;
-    static int TIME_DINNER = 2;
+    static final String PARSE_ERROR = "정보가 존재하지 않습니다.";
+    static final int TIME_LUNCH = 1;
+    static final int TIME_DINNER = 2;
 
-    public static int ERR_NO_ERROR = 3;
-    public static int ERR_NET_ERROR = 4;
+    public final static int ERR_NO_ERROR = 3;
+    public final static int ERR_NET_ERROR = 4;
 
     private boolean isFirst;
     int error_code;
     int mm, ay;
     int lastday;
 
-    ParseSen(ParseCallBack event) {
+    ParseSen() {
 
-        callbackEvent = event;
+
         check = new boolean[33];
         menu_d = new String[1000];
         menu_l = new String[1000];
@@ -52,7 +59,7 @@ public class ParseSen {
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            callbackEvent.callbackMethod(ParseSen.this);
+            mcallback.OnFinish(ParseSen.this);
         }
     };
 

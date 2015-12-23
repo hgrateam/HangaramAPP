@@ -14,25 +14,24 @@ import java.net.URL;
  */
 public class ParseCal {
 
-    private ParseCallBack callbackEvent;
-    String returnSpace(int a){
-        String b ="";
-        for(int i=0;i<a;i++) b+="\t";
-        return b;
+
+    public interface ParseCallBack{
+        public void OnFinish(ParseCal a);
+    }
+    ParseCallBack mcallback;
+    public void setCallBackListener(ParseCallBack callback){
+        mcallback = callback;
     }
 
     boolean check[];
 
-    static String PARSE_ERROR = "정보가 존재하지 않습니다.";
-    static int HEAD_OPEN = 1;
-    static int HEAD_CLOSE = 2;
+    final String PARSE_ERROR = "정보가 존재하지 않습니다.";
+    final int HEAD_OPEN = 1;
+    final int HEAD_CLOSE = 2;
 
     private int year, month;
 
-    ParseCal(ParseCallBack event) {
-
-        callbackEvent = event;
-
+    ParseCal() {
         check = new boolean[31];
         for(int i=0;i<31;i++) {
             check[i] = false;
@@ -42,7 +41,7 @@ public class ParseCal {
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            callbackEvent.callbackMethod_Cal(ParseCal.this);
+            mcallback.OnFinish(ParseCal.this);
         }
     };
 
@@ -115,7 +114,7 @@ public class ParseCal {
                         }
                         else if(line.contains("END:VEVENT")) {
                             if(intToYear(intdstart)==year || intToYear(intdstart)==year-1 || intToYear(intdstart)==year+1) {
-                                strItem.replace("\\","");
+                                strItem = strItem.replace("\\", "");
                                 Log.i("info", "dstart : " + intdstart + "|dend = " + intdend + " |item = " + strItem);
 
                             }   depth--;

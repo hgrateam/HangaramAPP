@@ -11,10 +11,10 @@ import java.util.Date;
  * Created by Suhyun on 2015-12-21.
  */
 public class MealInfo {
-    private static int SIZE=1000;
+    private final int SIZE=1000;
     private int cnt;
     private String template;
-    public static String NULL = "";
+    public final String NULL = "";
     Context mContext;
     private String mealInfo[];
     private int mealDate[];
@@ -41,7 +41,7 @@ public class MealInfo {
         template = temp;
     }
     public void acesssDB(){
-        DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1);
+        DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
         int date;

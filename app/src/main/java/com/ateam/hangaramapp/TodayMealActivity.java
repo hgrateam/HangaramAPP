@@ -61,113 +61,6 @@ public class TodayMealActivity extends AppCompatActivity {
     public int dateToInt(Date date){
         return ymdToInt(date.getYear()+1900,date.getMonth()+1, date.getDate());
     }
-    ParseCallBack callbackEvent = new ParseCallBack() {
-
-        @Override
-        public void callbackMethod(ParseSen a) {
-
-            DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1);
-            SQLiteDatabase db = helper.getReadableDatabase();
-            String str = "";
-            int dbSize = 0, dbLastday = -1;
-            boolean noupdateFlag=false;
-
-            for (int i = 0; i < 32; i++) {
-                dbCheck[i] = false;
-            }
-            int parseLastday;
-
-            Log.i("info", "제일 최근 정보 : " + a.getLastday() + "일자 정보");
-
-            Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
-            int date;
-            while (cursor.moveToNext()) {
-                date = cursor.getInt(1);
-                str += cursor.getInt(0) //id값; 신경 안써도 됨
-                        + " : date "
-                        + cursor.getInt(1) //날짜
-                        + ", lunch = "
-                        + cursor.getString(2) //점심
-                        + ", dinner = "
-                        + cursor.getString(3)  //저녁
-                        + "\n";
-                if (cursor.getInt(1) > dbLastday) {
-                    dbLastday = date;
-                }
-                dbSize++;
-                if (intToYear(date) == a.getYear() && intToMonth(date) == a.getMonth()) {
-                    dbCheck[intToDay(date)] = true;
-                    noupdateFlag = true;
-                }
-            }
-            helper.close();
-
-            if(a.getIsFirst()) {
-                if (noupdateFlag && a.getLastday() != -1) {
-                    Toast toast = Toast.makeText(TodayMealActivity.this, MSG_PARSE_ERROR, Toast.LENGTH_LONG);
-                    toast.show();
-                    // 이게 호출되면 나한테 무언가가 잘못된거임..
-                    // 나한테 말해줘
-                }
-            }
-            if (noupdateFlag || a.getErrorCode()==ParseSen.ERR_NET_ERROR) {
-                // 인터넷 연결이 영 이상하단 말이야 or 자료가 없어?
-                Log.i("info", "인터넷 확인좀...?");
-
-                progDialog.dismiss();
-
-                if(a.getIsFirst()){
-                    Toast toast = Toast.makeText(TodayMealActivity.this, MSG_FIRST_NETWORK_SUCKS, Toast.LENGTH_LONG);
-                    toast.show();
-                    finish();
-                }
-                Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NETWORK_SUCKS, Toast.LENGTH_LONG);
-                toast.show();
-
-                return;
-            }
-
-            parseLastday = ymdToInt(a.getYear(), a.getMonth(), a.getLastday());
-
-            // 새로운 정보가 또 있네?
-            Log.i("info", "dbLastday = " + dbLastday + " // parseLastday = " + parseLastday);
-
-            if (dbLastday != parseLastday) {
-                for (int i = 1; i <= 31; i++) {
-                    if (a.isMenuExist(i)) { // 파싱했는데 해당
-                        if (!dbCheck[i]) { // 이미 있엉
-
-                            date = ymdToInt(a.getYear(), a.getMonth(), i);
-                            Log.i("info", "insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
-                            helper.insert("insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
-                        }
-                    }
-                }
-
-                Toast toast = Toast.makeText(TodayMealActivity.this, MSG_UPDATE, Toast.LENGTH_LONG);
-                toast.show();
-
-            } else {
-                Log.i("info", "이미 정보가 있다!");
-                Toast toast = Toast.makeText(TodayMealActivity.this, MSG_ALREADY_EXISTS, Toast.LENGTH_LONG);
-                toast.show();
-                Log.i("info", "TODAYMEAL_DBLOG: " + str);
-            }
-
-            if(a.getIsFirst()){
-                drawCalendar();
-            }
-
-            getMealInfo();
-
-            progDialog.dismiss();
-        }
-
-        @Override
-        public void callbackMethod_Cal(ParseCal a) {
-
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,7 +115,108 @@ public class TodayMealActivity extends AppCompatActivity {
         progDialog.setMessage("정보를 받아오는 중입니다..");
         progDialog.show();
 
-        ps = new ParseSen(callbackEvent);
+        ps = new ParseSen();
+        ps.setCallBackListener(new ParseSen.ParseCallBack() {
+            @Override
+            public void OnFinish(ParseSen a) {
+
+                DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TIMETABLE_TABLE);
+                SQLiteDatabase db = helper.getReadableDatabase();
+                String str = "";
+                int dbSize = 0, dbLastday = -1;
+                boolean noupdateFlag=false;
+
+                for (int i = 0; i < 32; i++) {
+                    dbCheck[i] = false;
+                }
+                int parseLastday;
+
+                Log.i("info", "제일 최근 정보 : " + a.getLastday() + "일자 정보");
+
+                Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
+                int date;
+                while (cursor.moveToNext()) {
+                    date = cursor.getInt(1);
+                    str += cursor.getInt(0) //id값; 신경 안써도 됨
+                            + " : date "
+                            + cursor.getInt(1) //날짜
+                            + ", lunch = "
+                            + cursor.getString(2) //점심
+                            + ", dinner = "
+                            + cursor.getString(3)  //저녁
+                            + "\n";
+                    if (cursor.getInt(1) > dbLastday) {
+                        dbLastday = date;
+                    }
+                    dbSize++;
+                    if (intToYear(date) == a.getYear() && intToMonth(date) == a.getMonth()) {
+                        dbCheck[intToDay(date)] = true;
+                        noupdateFlag = true;
+                    }
+                }
+                helper.close();
+
+                if(a.getIsFirst()) {
+                    if (noupdateFlag && a.getLastday() != -1) {
+                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_PARSE_ERROR, Toast.LENGTH_LONG);
+                        toast.show();
+                        // 이게 호출되면 나한테 무언가가 잘못된거임..
+                        // 나한테 말해줘
+                    }
+                }
+                if (noupdateFlag || a.getErrorCode()==ParseSen.ERR_NET_ERROR) {
+                    // 인터넷 연결이 영 이상하단 말이야 or 자료가 없어?
+                    Log.i("info", "인터넷 확인좀...?");
+
+                    progDialog.dismiss();
+
+                    if(a.getIsFirst()){
+                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_FIRST_NETWORK_SUCKS, Toast.LENGTH_LONG);
+                        toast.show();
+                        finish();
+                    }
+                    Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NETWORK_SUCKS, Toast.LENGTH_LONG);
+                    toast.show();
+
+                    return;
+                }
+
+                parseLastday = ymdToInt(a.getYear(), a.getMonth(), a.getLastday());
+
+                // 새로운 정보가 또 있네?
+                Log.i("info", "dbLastday = " + dbLastday + " // parseLastday = " + parseLastday);
+
+                if (dbLastday != parseLastday) {
+                    for (int i = 1; i <= 31; i++) {
+                        if (a.isMenuExist(i)) { // 파싱했는데 해당
+                            if (!dbCheck[i]) { // 이미 있엉
+
+                                date = ymdToInt(a.getYear(), a.getMonth(), i);
+                                Log.i("info", "insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
+                                helper.insert("insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
+                            }
+                        }
+                    }
+
+                    Toast toast = Toast.makeText(TodayMealActivity.this, MSG_UPDATE, Toast.LENGTH_LONG);
+                    toast.show();
+
+                } else {
+                    Log.i("info", "이미 정보가 있다!");
+                    Toast toast = Toast.makeText(TodayMealActivity.this, MSG_ALREADY_EXISTS, Toast.LENGTH_LONG);
+                    toast.show();
+                    Log.i("info", "TODAYMEAL_DBLOG: " + str);
+                }
+
+                if(a.getIsFirst()){
+                    drawCalendar();
+                }
+
+                getMealInfo();
+
+                progDialog.dismiss();
+            }
+        });
 
         ps.setMM(month);
         ps.setAY(year);
@@ -232,7 +226,7 @@ public class TodayMealActivity extends AppCompatActivity {
 
     public int[] getDateRange() {
 
-        DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1);
+        DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
 
@@ -260,7 +254,7 @@ public class TodayMealActivity extends AppCompatActivity {
         return (dateBundle);
     }
     private void getMealInfo(){
-        DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1);
+        DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
         Date today = new Date();
         Collection<Date> highdates = new ArrayList<Date>(); // 하이라이트 할 날짜 목록
         int date;
