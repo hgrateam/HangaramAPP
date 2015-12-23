@@ -17,6 +17,7 @@
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_today_meal"
         android:layout_gravity="center"
+        android:transitionName="@string/transition_name_today_meal_card"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_margin="8dp"
@@ -27,10 +28,13 @@
         android:stateListAnimator="@anim/card_elevation">
 
         <TextView
-            android:id="@+id/today_meal"
+            android:id="@+id/text_today_meal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:transitionName="@string/transition_name_today_meal_text"
+            android:gravity="center"
+            android:layout_margin="10dp"
             android:textSize="20sp"
             android:text="@string/today_meal"/>
     </android.support.v7.widget.CardView>

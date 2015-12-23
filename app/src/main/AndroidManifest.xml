@@ -33,6 +33,14 @@
             >
         </activity>
         <activity android:name=".SCalendar" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/navigation_drawer_menu_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ateam.hangaramapp.MainActivity" />
+        </activity>
         <activity android:name=".TimeTable"
             android:label="시간표"
             android:parentActivityName=".MainActivity">
