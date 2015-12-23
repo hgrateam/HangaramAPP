@@ -22,5 +22,6 @@
     <com.ateam.hangaramapp.SubjectContainer
         android:layout_below="@id/time_table_guide"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:id="@+id/subject_container"
+        android:layout_height="match_parent" />
 </RelativeLayout>
