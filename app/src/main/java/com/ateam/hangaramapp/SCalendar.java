@@ -17,6 +17,7 @@ public class SCalendar extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
         ParseCallBack callbackEvent = new ParseCallBack() {
 
             @Override
@@ -35,7 +36,6 @@ public class SCalendar extends AppCompatActivity{
         ParseCal parsecal = new ParseCal(callbackEvent);
 
         TextView title = (TextView) findViewById(R.id.calendar_title);
-        TableLayout ty = (TableLayout) findViewById(R.id.calendar_tablelayout);
         Calendar cal = Calendar.getInstance();
 
         int month, year;

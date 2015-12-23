@@ -143,15 +143,15 @@ public class TodayMealActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_today_meal);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_today_meal);
         Button button1 = (Button) findViewById(R.id.today_meal_button1);
         calendar = (CalendarPickerView) findViewById(R.id.calendar_view);
 
 
         progDialog = new ProgressDialog(this);
 
-        setSupportActionBar(toolbar);
         // Get a support ActionBar corresponding to this toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_today_meal);
+        setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);

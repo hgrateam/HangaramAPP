@@ -60,6 +60,15 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        CardView cardView3 = (CardView) findViewById(R.id.card_time_table);
+        cardView3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, TimeTable.class);
+                //오늘의 급식으로 진입한다.
+                startActivity(intent);
+            }
+        });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

@@ -7,16 +7,20 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.ateam.hangaramapp.SCalendar">
+    tools:context="com.ateam.hangaramapp.TimeTable">
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/calendar_title"
-        android:textSize="20dp"
+        android:text="시간표에 추가할 과목을 선택해주세요"
+        android:id="@+id/time_table_guide"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
-        />
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"/>
 
+    <com.ateam.hangaramapp.SubjectContainer
+        android:layout_below="@id/time_table_guide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </RelativeLayout>
