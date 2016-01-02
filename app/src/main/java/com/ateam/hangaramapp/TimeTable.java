@@ -21,16 +21,17 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
 
     int day, column;
     TimeTableAdapter ttadapter;
-    ArrayList<String> subjects;
+    ArrayList<cellInfo> cellinfos;
     DBHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_table);
-        subjects = new ArrayList<>();
 
+        cellinfos = new ArrayList<cellInfo>();
         ttadapter = new TimeTableAdapter(TimeTable.this);
+
         TimeTableGridView gv = (TimeTableGridView) findViewById(R.id.ttgrid);
         gv.setAdapter(ttadapter);
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -48,6 +49,7 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
             }
         });
 
+        // 이미 저장되어있는 DB가 존재하면 표에 추가해준다.
         helper = new DBHelper(TimeTable.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TIMETABLE_TABLE);
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from " + DBHelper.TIMETABLE_TABLE_NAME, null);
@@ -58,28 +60,43 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
     }
     public void showTimeTableDialog(int day, int column){
         TimeTableDialogFragment fragment = new TimeTableDialogFragment();
+        // 이때까지 저장되어있는 과목명단을 넘겨준다.
+        ArrayList<String> subjects = new ArrayList<String>();
+
+        String name="", memo="";
+        for(int i=0;i<cellinfos.size();i++){
+            boolean flag = false;
+
+            if(cellinfos.get(i).getPosition() == day+column*6){
+                name = cellinfos.get(i).getName();
+                memo = cellinfos.get(i).getMemo();
+            }
+            for(int j=0;j<subjects.size();j++){
+                if(cellinfos.get(i).getName().equals(subjects.get(j))){
+                    flag = true;
+                }
+            }
+            if(flag == false){
+                subjects.add(cellinfos.get(i).getName());
+            }
+        }
+        // ArrayList<String> Subject에 중복없이 이때까지 기록된 과목명들이 저장된다.
         fragment.setDate(day, column);
         fragment.setSubjectList(subjects);
-        fragment.setCellInfo("","");
+        fragment.setCellInfo(name,memo);
         fragment.show(getSupportFragmentManager(), "TimeTable");
     }
 
     @Override
     public void onDialogPositiveClick(String value, String memo) {
         addClass(value, day, column, memo);
+        // Dialog 에서 정보가 입력되었을때 DB를 기록한다.
         helper.insert("insert into " + DBHelper.TIMETABLE_TABLE_NAME + " (name, pos, memo) values ('" + value + "',  + "+(day+column*6) + ", '"+memo+"');");
+        // Todo: 빈칸이면 DB삭제! 아니면 DB삭제할 방법 생각해두기.
     }
     public void addClass(String value, int day, int column, String memo){
-        ttadapter.addClass(new cellInfo(value,day,column,memo));
-        boolean flag = false;
-        for(int i=0;i<subjects.size();i++){
-            if(subjects.get(i).equals(value)){
-                flag = true;
-            }
-        }
-        if(flag == false){
-            subjects.add(value);
-        }
+        cellinfos.add(new cellInfo(value, day, column, memo));
+        ttadapter.setCellInfos(cellinfos);
         ttadapter.notifyDataSetChanged();
     }
 }
@@ -113,12 +130,12 @@ class TimeTableAdapter extends BaseAdapter{
         this.context = context;
         inf = (LayoutInflater) context.getSystemService
                 (Context.LAYOUT_INFLATER_SERVICE);
-        cellinfos = new ArrayList<cellInfo>();
+
+    }
+    public void setCellInfos(ArrayList<cellInfo> cellinfos){
+        this.cellinfos = cellinfos;
     }
 
-    public void addClass(cellInfo a){
-        cellinfos.add(a);
-    }
     @Override
     public int getCount() {
         return 42;
