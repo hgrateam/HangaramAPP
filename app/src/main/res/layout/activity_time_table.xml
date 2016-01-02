@@ -8,9 +8,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="ateam.timetableview.MainActivity">
+    tools:context="com.ateam.hangaramapp.TimeTable">
 
-    <GridView
+    <com.ateam.hangaramapp.TimeTableGridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/ttgrid"
@@ -21,8 +21,8 @@
         android:numColumns="6"
         android:gravity="center"
         android:longClickable="false"
-        android:verticalSpacing="35dp"
+        android:verticalSpacing="50dp"
         android:textAlignment="center">
 
-    </GridView>
+    </com.ateam.hangaramapp.TimeTableGridView>
 </RelativeLayout>

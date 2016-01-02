@@ -25,7 +25,7 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
         setContentView(R.layout.activity_time_table);
 
         ttadapter = new TimeTableAdapter(TimeTable.this);
-        GridView gv = (GridView) findViewById(R.id.ttgrid);
+        TimeTableGridView gv = (TimeTableGridView) findViewById(R.id.ttgrid);
         gv.setAdapter(ttadapter);
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
@@ -51,10 +51,7 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
 
     @Override
     public void onDialogPositiveClick(String value) {
-        Log.i("info", "name is "+value);
-//        ttadapter.addClass(value,day,column);
         ttadapter.addClass(new cellInfo(value,day,column));
-
         ttadapter.notifyDataSetChanged();
     }
 }
@@ -76,7 +73,7 @@ class cellInfo{
 }
 class TimeTableAdapter extends BaseAdapter{
     String dayName[]={"","월","화","수","목","금"};
-    String timeIndi[] ={"8:00~\n9:15", "9:25~\n10:40", "10:50~\n12:5", "13:10~\n14:25", "14:35~\n15:50","16:00~\n17:15"};
+    String timeIndi[] ={"8:00~\n9:15", "9:25~\n10:40", "10:50~\n12:50", "13:10~\n14:25", "14:35~\n15:50","16:00~\n17:15"};
     Context context;
     ArrayList<cellInfo> cellinfos;
     LayoutInflater inf;
