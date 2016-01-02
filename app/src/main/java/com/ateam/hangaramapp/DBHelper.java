@@ -31,17 +31,7 @@ public class DBHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.i("info"," DBHelper.onCreate : table+code = "+table_code);
-  /*      switch(table_code) {
-            case TODAYMEAL_TABLE:
-                Log.i("info"," 오늘의급식DB 생성!");
-                db.execSQL("CREATE TABLE " + TODAYMEAL_TABLE_NAME + "( _id INTEGER PRIMARY KEY AUTOINCREMENT, date INTEGER, lunch TEXT, dinner TEXT);");
-                break;
-            case SUBJECTS_TABLE:
-                Log.i("info"," 과목 생성!");
-                db.execSQL("CREATE TABLE " + SUBJECTS_TABLE_NAME + "( _id INTEGER PRIMARY KEY AUTOINCREMENT, name INTEGER, colorcode INTENGER memo TEXT);");
-                break;
-        }
-*/    }
+   }
 
     public void insert(String _query) {
         SQLiteDatabase db = getWritableDatabase();
@@ -74,9 +64,9 @@ public class DBHelper extends SQLiteOpenHelper{
                 Log.i("info"," 오늘의급식DB 생성!");
                 db.execSQL("CREATE TABLE IF NOT EXISTS " + TODAYMEAL_TABLE_NAME + "( _id INTEGER PRIMARY KEY AUTOINCREMENT, date INTEGER, lunch TEXT, dinner TEXT);");
                 break;
-            case SUBJECTS_TABLE:
+            case TIMETABLE_TABLE:
                 Log.i("info"," 과목 생성!");
-                db.execSQL("CREATE TABLE IF NOT EXISTS " + SUBJECTS_TABLE_NAME + "( _id INTEGER PRIMARY KEY AUTOINCREMENT, name INTEGER, colorcode INTENGER memo TEXT);");
+                db.execSQL("CREATE TABLE IF NOT EXISTS " + TIMETABLE_TABLE_NAME + "( _id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, pos INTEGER , memo TEXT);");
                 break;
         }
     }

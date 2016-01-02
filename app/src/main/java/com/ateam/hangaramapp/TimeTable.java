@@ -1,6 +1,8 @@
 package com.ateam.hangaramapp;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
     int day, column;
     TimeTableAdapter ttadapter;
     ArrayList<String> subjects;
+    DBHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,31 +33,44 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
         ttadapter = new TimeTableAdapter(TimeTable.this);
         TimeTableGridView gv = (TimeTableGridView) findViewById(R.id.ttgrid);
         gv.setAdapter(ttadapter);
-        gv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.i("info", "pos = " + position + " id = " + id);
                 // 7 8 9 10 11
                 // 13 14 15 16 17
                 // ...
-                if(position%6!=0 && position>=7){
-                    day = position%6; // 1부터 시작
-                    column = position/6; // 1부터 시작
+                if (position % 6 != 0 && position >= 7) {
+                    day = position % 6; // 1부터 시작
+                    column = position / 6; // 1부터 시작
                     showTimeTableDialog(day, column);
                 }
             }
         });
+
+        helper = new DBHelper(TimeTable.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TIMETABLE_TABLE);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from " + DBHelper.TIMETABLE_TABLE_NAME, null);
+        while (cursor.moveToNext()) {
+            addClass(cursor.getString(1), cursor.getInt(2) % 6, cursor.getInt(2) / 6, cursor.getString(3));
+        }
+        helper.close();
     }
     public void showTimeTableDialog(int day, int column){
         TimeTableDialogFragment fragment = new TimeTableDialogFragment();
         fragment.setDate(day, column);
         fragment.setSubjectList(subjects);
-        fragment.show(getSupportFragmentManager(),"TimeTable");
+        fragment.setCellInfo("","");
+        fragment.show(getSupportFragmentManager(), "TimeTable");
     }
 
     @Override
-    public void onDialogPositiveClick(String value) {
-        ttadapter.addClass(new cellInfo(value,day,column));
+    public void onDialogPositiveClick(String value, String memo) {
+        addClass(value, day, column, memo);
+        helper.insert("insert into " + DBHelper.TIMETABLE_TABLE_NAME + " (name, pos, memo) values ('" + value + "',  + "+(day+column*6) + ", '"+memo+"');");
+    }
+    public void addClass(String value, int day, int column, String memo){
+        ttadapter.addClass(new cellInfo(value,day,column,memo));
         boolean flag = false;
         for(int i=0;i<subjects.size();i++){
             if(subjects.get(i).equals(value)){
@@ -68,10 +84,11 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
     }
 }
 class cellInfo{
-    public cellInfo(String name, int day, int column){
+    public cellInfo(String name, int day, int column, String memo){
         this.name = name;
         this.day = day;
         this.column = column;
+        this.memo = memo;
     }
     public int getPosition(){
         return day+column*6;
@@ -79,9 +96,11 @@ class cellInfo{
     public String getName(){
         return name;
     }
+    public String getMemo()  {return memo;}
     private String name;
     private int day;
     private int column;
+    private String memo;
 }
 class TimeTableAdapter extends BaseAdapter{
     String dayName[]={"","월","화","수","목","금"};

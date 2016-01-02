@@ -26,11 +26,13 @@ public class TimeTableDialogFragment extends DialogFragment {
 
     String dayName[]={"월","화","수","목","금"};
     AutoCompleteTextView subjectName;
+    EditText et_memo;
+    String name, memo;
     String[] subjectlist;
     int day, column;
     public interface TimeTableDialogListener{
         //        void onDialogPositiveClick(DialogFragment dialog);
-        void onDialogPositiveClick(String value);
+        void onDialogPositiveClick(String value, String memo);
     }
     TimeTableDialogListener mListener;
 
@@ -60,6 +62,11 @@ public class TimeTableDialogFragment extends DialogFragment {
         }
     }
 
+    public void setCellInfo(String name, String memo){
+        this.name = name;
+        this.memo = memo;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -75,7 +82,10 @@ public class TimeTableDialogFragment extends DialogFragment {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, subjectlist);
         subjectName = (AutoCompleteTextView) view.findViewById(R.id.tv_tt_name);
+        et_memo = (EditText) view.findViewById(R.id.tv_tt_memo);
 
+        subjectName.setText(name);
+        et_memo.setText(memo);
         subjectName.setThreshold(0);
         subjectName.setAdapter(adapter);
 
@@ -86,7 +96,8 @@ public class TimeTableDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         // sign in the user ...
                         String value = subjectName.getText().toString();
-                        mListener.onDialogPositiveClick(value);
+                        String Memo = et_memo.getText().toString();
+                        mListener.onDialogPositiveClick(value, Memo);
 
                     }
                 })
