@@ -19,10 +19,13 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
 
     int day, column;
     TimeTableAdapter ttadapter;
+    ArrayList<String> subjects;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_table);
+        subjects = new ArrayList<>();
 
         ttadapter = new TimeTableAdapter(TimeTable.this);
         TimeTableGridView gv = (TimeTableGridView) findViewById(R.id.ttgrid);
@@ -45,13 +48,22 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
     public void showTimeTableDialog(int day, int column){
         TimeTableDialogFragment fragment = new TimeTableDialogFragment();
         fragment.setDate(day, column);
+        fragment.setSubjectList(subjects);
         fragment.show(getSupportFragmentManager(),"TimeTable");
-
     }
 
     @Override
     public void onDialogPositiveClick(String value) {
         ttadapter.addClass(new cellInfo(value,day,column));
+        boolean flag = false;
+        for(int i=0;i<subjects.size();i++){
+            if(subjects.get(i).equals(value)){
+                flag = true;
+            }
+        }
+        if(flag == false){
+            subjects.add(value);
+        }
         ttadapter.notifyDataSetChanged();
     }
 }
@@ -123,7 +135,6 @@ class TimeTableAdapter extends BaseAdapter{
                 if(cellinfos.get(i).getPosition() == position) {
                     tv2.setText(cellinfos.get(i).getName());
                 }
-
             }
         }
         return convertView;

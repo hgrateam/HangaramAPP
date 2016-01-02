@@ -11,9 +11,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import java.sql.Time;
+import java.util.ArrayList;
 
 /**
  * Created by Suhyun on 2016-01-02.
@@ -21,7 +25,8 @@ import java.sql.Time;
 public class TimeTableDialogFragment extends DialogFragment {
 
     String dayName[]={"월","화","수","목","금"};
-    EditText subjectName;
+    AutoCompleteTextView subjectName;
+    String[] subjectlist;
     int day, column;
     public interface TimeTableDialogListener{
         //        void onDialogPositiveClick(DialogFragment dialog);
@@ -48,6 +53,12 @@ public class TimeTableDialogFragment extends DialogFragment {
         this.day = day;
         this.column = column;
     }
+    public void setSubjectList(ArrayList<String> a){
+        subjectlist = new String[a.size()];
+        for(int i=0;i<a.size();i++){
+            subjectlist[i] = a.get(i);
+        }
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -62,10 +73,14 @@ public class TimeTableDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.timetable_dialog, null);
 
-        subjectName = (EditText) view.findViewById(R.id.tv_tt_name);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, subjectlist);
+        subjectName = (AutoCompleteTextView) view.findViewById(R.id.tv_tt_name);
+
+        subjectName.setThreshold(0);
+        subjectName.setAdapter(adapter);
+
         builder.setView(view)
                 // Add action buttons
-
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {

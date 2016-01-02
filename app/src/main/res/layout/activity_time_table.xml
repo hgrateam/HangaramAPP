@@ -21,7 +21,7 @@
         android:numColumns="6"
         android:gravity="center"
         android:longClickable="false"
-        android:verticalSpacing="50dp"
+        android:verticalSpacing="3dp"
         android:textAlignment="center">
 
     </com.ateam.hangaramapp.TimeTableGridView>
