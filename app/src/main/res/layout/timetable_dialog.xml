@@ -3,32 +3,65 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <AutoCompleteTextView
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:id="@+id/ll_tt_name"
+       android:layout_centerHorizontal="true">
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="match_parent"
+           android:layout_margin="10dp"
+           android:gravity="center"
+           android:textSize="20sp"
+           android:textColor="@color/colorAccent"
+           android:text="과목" />
+
+       <AutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="과목 이름을 입력하세욧."
+            android:focusable="true"
+            android:layout_margin="5dp"
+            android:id="@+id/tv_tt_name"
+            android:layout_gravity = "center" />
+
+   </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="과목 이름"
-        android:focusable="true"
-        android:layout_margin="5dp"
-        android:layout_gravity = "center"
-        android:id="@+id/tv_tt_name" />
+        android:layout_centerHorizontal="true"
+        android:id="@+id/ll_tt_memo"
+        android:layout_below="@id/ll_tt_name">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/colorAccent"
+            android:text="메모" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_tt_name"
-        android:hint="메모"
+        android:hint="메모를 추가하세욧."
         android:layout_margin="5dp"
-        android:layout_gravity = "center"
-        android:id="@+id/tv_tt_memo" />
+        android:id="@+id/tv_tt_memo"
+        android:layout_gravity = "center" />
+
+    </LinearLayout>
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_tt_memo"
+        android:layout_below="@id/ll_tt_memo"
         android:text="메모 복사여부"
         android:layout_margin="5dp"
 
         android:id="@+id/checkBox"/>
-
 
 </RelativeLayout>

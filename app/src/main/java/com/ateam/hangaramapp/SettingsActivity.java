@@ -103,6 +103,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     };
 
+    private static Preference.OnPreferenceClickListener onPreferenceClickListener = new Preference.OnPreferenceClickListener(){
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            String key = preference.getKey();
+
+            if (key == "delete_meal_db"){
+
+                //TODO:급식 디비를 삭제합니다. 디비를 어떻게 건드리는지는 아직 잘 모르니까 나중에 해야징~~~~
+
+            }
+
+            return false;
+        }
+    };
+
+
     /**
      * Helper method to determine if the device has an extra-large screen. For
      * example, 10" tablets are extra-large.
@@ -235,9 +252,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // In the simplified UI, fragments are not used at all and we instead
         // use the older PreferenceActivity APIs.
 
-        // Add container.
-        addPreferencesFromResource(R.xml.pref_container);
-
         // Add 'today meal' preferences, and a corresponding header.
         PreferenceCategory fakeHeader = new PreferenceCategory(this);
         fakeHeader.setTitle(R.string.pref_header_today_meal);
@@ -290,24 +304,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
-                || PreferenceContainerFragment.class.getName().equals(fragmentName)
                 || TodayMealPreferenceFragment.class.getName().equals(fragmentName)
                 || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName);
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class PreferenceContainerFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            // Add container.
-            addPreferencesFromResource(R.xml.pref_container);
-
-            //TODO:이 첫번째 헤더를 표시하기 위한 해결책은 임시방편이므로 제대로된 해결책을 찾기 전까지는 불안정할 수 있다.
-            //그런데 왜 해결이 안될까 ㅋㅋㅋㅋㅋㅋ 젠장 다음으로 미룬다.
-        }
     }
 
     /**

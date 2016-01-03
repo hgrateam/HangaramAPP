@@ -1,10 +1,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceCategory
+    android:title="오늘의 급식">
+    <Preference
+        android:title="급식 정보 삭제"
+        android:summary="기기에 저장된 급식정보를 초기화합니다. 급식표기가 원할하지 않을 때 사용합니다."
+        android:key="delete_meal_db"/>
 
     <SwitchPreference
         android:defaultValue="true"
         android:key="example_switch"
         android:summary="@string/pref_description_social_recommendations"
         android:title="@string/pref_title_social_recommendations" />
+
 
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
@@ -29,5 +36,5 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_add_friends_to_messages" />
-
+</PreferenceCategory>
 </PreferenceScreen>
