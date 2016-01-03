@@ -42,8 +42,6 @@ public class ParseSen {
     int lastday;
 
     ParseSen() {
-
-
         check = new boolean[33];
         menu_d = new String[1000];
         menu_l = new String[1000];

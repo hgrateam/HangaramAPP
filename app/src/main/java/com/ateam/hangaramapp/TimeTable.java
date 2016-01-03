@@ -38,9 +38,7 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.i("info", "pos = " + position + " id = " + id);
-                // 7 8 9 10 11
-                // 13 14 15 16 17
-                // ...
+
                 if (position % 6 != 0 && position >= 7) {
                     day = position % 6; // 1부터 시작
                     column = position / 6; // 1부터 시작
@@ -76,6 +74,7 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
                     flag = true;
                 }
             }
+
             if(flag == false){
                 subjects.add(cellinfos.get(i).getName());
             }
@@ -130,7 +129,6 @@ class TimeTableAdapter extends BaseAdapter{
         this.context = context;
         inf = (LayoutInflater) context.getSystemService
                 (Context.LAYOUT_INFLATER_SERVICE);
-
     }
     public void setCellInfos(ArrayList<cellInfo> cellinfos){
         this.cellinfos = cellinfos;
@@ -179,8 +177,6 @@ class TimeTableAdapter extends BaseAdapter{
         return convertView;
     }
 }
-
-
 
 /*
 * 1교시 8시~9시15분

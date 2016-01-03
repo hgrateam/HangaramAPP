@@ -69,15 +69,6 @@ public class TodayMealActivity extends AppCompatActivity {
 
         Button button1 = (Button) findViewById(R.id.today_meal_button1);
         // 잠시 버튼은 안보이게...
-
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            gotoParse(t_year, t_month, false);
-                // ps.parse가 처리하는데 시간이 걸리기 때문에 그냥 getMenu()를 하면 에러가 떠버린다.
-            }
-        });
-        // Todo: 버튼 삭제하고 메뉴로 올려버려야함.
         button1.setVisibility(View.GONE);
 
         schedule = (TextView) findViewById(R.id.schedule_today_meal);
@@ -99,17 +90,54 @@ public class TodayMealActivity extends AppCompatActivity {
 
 
         if(startDate == 0) { // 기존 정보가 하나도 없어! -> 정보를 못받아올때는 그릴게 없으니까 그냥 엑티비티를 나갈거임!
-            gotoParse(t_year, t_month, true);
+            Log.i("info", "기존 정보가 하나도 없군");
+            gotoParse(t_year, t_month, 0, true);
+            gotoParse(t_year, t_month, 1, true);
+            gotoParse(t_year, t_month, -1, true);
         }
 
         else if(endDate < ymdToInt(t_year, t_month, t_day)){ // 오늘자 정보가 없어! -> 파싱
-            gotoParse(t_year, t_month, false);
+            Log.i("info", "오늘자 정보가 없군!");
+            gotoParse(t_year, t_month, 0, false);
+            gotoParse(t_year, t_month, 1, false);
+            gotoParse(t_year, t_month, -1, false);
         }
         else getMealInfo();
-
     }
-    public void gotoParse(int year, int month, boolean isFirst){
+    public void gotoParse(int y, int m, int calc,  boolean isFirst){
+
+         // boolean isFirst 의 역활 :
         ParseSen ps;
+        int year, month;
+        year = y;
+        month = m;
+
+        if(calc != 0 ){
+            if(calc>0){
+                if(month + calc >=12){
+                    year++;
+                    month+=calc;
+                    month-=12;
+                    Log.i("info", " 더한다!");
+                }
+                else{
+                    month+=calc;
+                }
+            }
+            else{
+                if(month + calc <= 0){
+                    year--;
+                    month+=calc;
+                    month+=12;
+                    Log.i("info", " 뺀다!");
+                }
+                else{
+                    month+=calc;
+                }
+            }
+
+        }
+        Log.i("info", "Parse Target : "+ year + month+ "  calc : "+calc);
 
         progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progDialog.setMessage("정보를 받아오는 중입니다..");
@@ -181,6 +209,9 @@ public class TodayMealActivity extends AppCompatActivity {
                     return;
                 }
 
+                if(dbLastday == -1){ // 아무것도 DB에서 못불러왔는데..?
+
+                }
                 parseLastday = ymdToInt(a.getYear(), a.getMonth(), a.getLastday());
 
                 // 새로운 정보가 또 있네?
@@ -318,6 +349,7 @@ public class TodayMealActivity extends AppCompatActivity {
 
     }
     private void drawCalendar(){
+        // 달력에 그릴 범위를 계산해온다.
         int[] dateBundle = getDateRange();
 
         //급식 캘린더의 시작 날짜를 초기화한다.
@@ -331,9 +363,9 @@ public class TodayMealActivity extends AppCompatActivity {
         calStart.set(startYear, --startMonth, startDay);
 
 
-        t_year=gcalendar.get(Calendar.YEAR);
-        t_month=gcalendar.get(Calendar.MONTH)+1;
-        t_day=gcalendar.get(Calendar. DAY_OF_MONTH);
+        t_year=gcalendar.get(Calendar.YEAR); // index 1
+        t_month=gcalendar.get(Calendar.MONTH)+1; // index 1
+        t_day=gcalendar.get(Calendar. DAY_OF_MONTH); // index 1
 
         Log.i("info", "오늘의 날짜 : "+t_year +"/"+ t_month +"/"+ t_day);
         Log.i("info", "startYear = " + startYear + " 입니다.");
