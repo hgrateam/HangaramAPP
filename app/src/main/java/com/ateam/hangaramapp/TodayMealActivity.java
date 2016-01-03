@@ -42,7 +42,7 @@ public class TodayMealActivity extends AppCompatActivity {
     private static String MSG_PARSE_ERROR = "무엇인가 잘못되었다. 콜미";
     private static String MSG_NETWORK_SUCKS = "네트워크 상태가 올바르지 않습니다.";
     private static String MSG_FIRST_NETWORK_SUCKS = "네트워크 상태가 올바르지 않습니다. 처음 접근은 네트워크가 필요합니다.";
-    private static String MSG_ALREADY_EXISTS = "이미 최신 정보입니다.";
+    private static String MSG_ALREADY_EXISTS = "더 이상 갱신할 정보가 없습니다.";
     private static String MSG_UPDATE="최신 정보를 갱신하였습니다.";
     private static String MSG_NO_MEAL="해당 날짜의 급식 정보가 없습니다.";
     private static String MSG_NO_SHOW="보여줄 급식정보가 없습니다.";
@@ -182,6 +182,22 @@ public class TodayMealActivity extends AppCompatActivity {
                     }
                 }
                 helper.close();
+
+                if(a.getLastday() != - 1) {
+                    for (int i = 1; i <= 31; i++) {
+                        if (a.isMenuExist(i)) { // 파싱했는데 해당
+                            if (!dbCheck[i]) { // 이미 있는경우는 제외 없으면 DB추가
+
+                                date = ymdToInt(a.getYear(), a.getMonth(), i);
+                                Log.i("info", "insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
+                                helper.insert("insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
+                            }
+                        }
+                    }
+                }
+
+                progDialog.dismiss();
+
                 /*
                 (ParseSen 에서 파싱 해온거는 아직 DB에 저장은 안 한 상태임)
                 *   a.getLastDay() == -1 : 파싱을 하긴했는데 말이야 아무것도 없더라구
@@ -190,6 +206,23 @@ public class TodayMealActivity extends AppCompatActivity {
                 *   dbLastday == -1 : db에 아무것도 없음 ㅋ
                 *
                 * */
+
+                if (a.getErrorCode()==ParseSen.ERR_NET_ERROR) {
+                    // 인터넷 연결이 영 이상하단 말이야 or 자료가 없어?
+                    Log.i("info", "인터넷 확인좀...?");
+
+
+                    if(a.getIsFirst()){
+                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_FIRST_NETWORK_SUCKS, Toast.LENGTH_LONG);
+                        toast.show();
+                        finish();
+                    }
+                    Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NETWORK_SUCKS, Toast.LENGTH_LONG);
+                    toast.show();
+                    drawCalendar();
+
+                    return;
+                }
                 if (a.getLastday()==-1){ // 파싱해올거도 없고...
                     if(dbLastday == -1){ // DB도 없고.. 표시해줄게 없는데?
 
@@ -208,53 +241,17 @@ public class TodayMealActivity extends AppCompatActivity {
                         //  파싱해 올건 없는데 기존 데이터는 있네?
                         Log.i("info", "이미 정보가 있다! 파싱해올 정보가 없다.");
                         Toast toast = Toast.makeText(TodayMealActivity.this, MSG_ALREADY_EXISTS, Toast.LENGTH_LONG);
-                        progDialog.dismiss();
                         toast.show();
+                        drawCalendar();
                         return;
                     }
                 }
-                if (a.getErrorCode()==ParseSen.ERR_NET_ERROR) {
-                    // 인터넷 연결이 영 이상하단 말이야 or 자료가 없어?
-                    Log.i("info", "인터넷 확인좀...?");
-
-                    progDialog.dismiss();
-
-                    if(a.getIsFirst()){
-                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_FIRST_NETWORK_SUCKS, Toast.LENGTH_LONG);
-                        toast.show();
-                        finish();
-                    }
-                    Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NETWORK_SUCKS, Toast.LENGTH_LONG);
-                    toast.show();
-
-                    return;
-                }
-
-                if(a.getLastday() != - 1) {
-                    for (int i = 1; i <= 31; i++) {
-                        if (a.isMenuExist(i)) { // 파싱했는데 해당
-                            if (!dbCheck[i]) { // 이미 있는경우는 제외 없으면 DB추가
-
-                                date = ymdToInt(a.getYear(), a.getMonth(), i);
-                                Log.i("info", "insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
-                                helper.insert("insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
-                            }
-                        }
-                    }
-                }
-
-                parseLastday = ymdToInt(a.getYear(), a.getMonth(), a.getLastday());
-
-                // 새로운 정보가 또 있네?
-                Log.i("info", "dbLastday = " + dbLastday + " // parseLastday = " + parseLastday);
-
 
                 Toast toast = Toast.makeText(TodayMealActivity.this, MSG_UPDATE, Toast.LENGTH_LONG);
                 toast.show();
 
-                getMealInfo();
+
                 drawCalendar();
-                progDialog.dismiss();
             }
         });
 
@@ -316,10 +313,10 @@ public class TodayMealActivity extends AppCompatActivity {
                 date2.setYear(intToYear(date) - 1900);
                 date2.setMonth(intToMonth(date) - 1);
                 date2.setDate(intToDay(date));
-                Log.i("info", "highlight : " + dateToInt(date2));
 
                 if(dateToInt(today)!=date) {
                     highdates.add(date2); // 오늘은 하이라이트 노노해
+                    Log.i("info", "highlight : " + dateToInt(date2));
                 }
             }
         }
@@ -369,19 +366,9 @@ public class TodayMealActivity extends AppCompatActivity {
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
         calendar.init(calStart.getTime(), calEnd.getTime());
 
-        calendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                // public void setText(date)참조;
-                setCellInfo(date);
-            }
-            @Override
-            public void onDateUnselected(Date date) {
-
-            }
-        });
     }
     private void drawCalendar(){
+        getMealInfo();
         // 달력에 그릴 범위를 계산해온다.
         int[] dateBundle = getDateRange();
 
@@ -393,8 +380,6 @@ public class TodayMealActivity extends AppCompatActivity {
 
         Calendar calStart = Calendar.getInstance();
         calStart.set(startYear, --startMonth, startDay);
-
-
 
         Log.i("info", "startYear = " + startYear + " 입니다.");
 
