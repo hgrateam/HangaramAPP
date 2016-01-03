@@ -98,16 +98,16 @@ public class TodayMealActivity extends AppCompatActivity {
 
         if(startDate == 0) { // 기존 정보가 하나도 없어! -> 정보를 못받아올때는 그릴게 없으니까 그냥 엑티비티를 나갈거임!
             Log.i("info", "기존 정보가 하나도 없군");
+           gotoParse(t_year, t_month, -1, true);
             gotoParse(t_year, t_month, 0, true);
             gotoParse(t_year, t_month, 1, true);
-            gotoParse(t_year, t_month, -1, true);
         }
 
         else if(endDate < ymdToInt(t_year, t_month, t_day)){ // 오늘자 정보가 없어! -> 파싱
             Log.i("info", "오늘자 정보가 없군!");
+            gotoParse(t_year, t_month, -1, false);
             gotoParse(t_year, t_month, 0, false);
             gotoParse(t_year, t_month, 1, false);
-            gotoParse(t_year, t_month, -1, false);
         }
         else getMealInfo();
     }
@@ -160,12 +160,10 @@ public class TodayMealActivity extends AppCompatActivity {
                 DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TIMETABLE_TABLE);
                 SQLiteDatabase db = helper.getReadableDatabase();
                 int dbLastday = -1;
-                boolean noupdateFlag=false;
 
                 for (int i = 0; i < 32; i++) {
                     dbCheck[i] = false;
                 }
-                int parseLastday;
 
                 Log.i("info", "제일 최근 정보 : " + a.getLastday() + "일자 정보");
 
@@ -178,7 +176,6 @@ public class TodayMealActivity extends AppCompatActivity {
                     }
                     if (intToYear(date) == a.getYear() && intToMonth(date) == a.getMonth()) {
                         dbCheck[intToDay(date)] = true;
-                        noupdateFlag = true;
                     }
                 }
                 helper.close();
