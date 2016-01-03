@@ -167,9 +167,12 @@ class TimeTableAdapter extends BaseAdapter{
         else{
             convertView = inf.inflate(R.layout.timetable_row, null);
             TextView tv2 = (TextView) convertView.findViewById(R.id.ttrow);
-            for(int i=0;i<cellinfos.size();i++){
-                if(cellinfos.get(i).getPosition() == position) {
-                    tv2.setText(cellinfos.get(i).getName());
+            if(cellinfos != null) {
+                for (int i = 0; i < cellinfos.size(); i++) {
+                    if (cellinfos.get(i).getPosition() == position) {
+                        tv2.setText(cellinfos.get(i).getName());
+                        break;
+                    }
                 }
             }
         }
