@@ -247,7 +247,6 @@ public class TodayMealActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText(TodayMealActivity.this, MSG_UPDATE, Toast.LENGTH_LONG);
                 toast.show();
 
-
                 drawCalendar();
             }
         });
@@ -307,7 +306,6 @@ public class TodayMealActivity extends AppCompatActivity {
             if(startDate <= date && date <= endDate) {
                 mealinfo.setTemplate(intToYear(date)+"년 "+intToMonth(date)+"월 "+ intToDay(date)+"일\n [중식]\n!lunch!\n\n[저녁]\n!dinner!");
                 mealinfo.add(cursor.getInt(1), cursor.getString(2), cursor.getString(3));
-//                mealinfo.add(cursor.getInt(1), "[중식]\n" + cursor.getString(2) + "\n\n" + "[석식]\n" + cursor.getString(3));
 
                 Date date2 = new Date();
                 date2.setYear(intToYear(date) - 1900);

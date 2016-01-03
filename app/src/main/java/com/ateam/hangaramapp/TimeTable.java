@@ -153,8 +153,8 @@ class TimeTableAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
 //        if (convertView==null)
         if(position<6){
-            convertView = inf.inflate(R.layout.timetable_indicator, null);
-            TextView tv = (TextView) convertView.findViewById(R.id.ttindi);
+            convertView = inf.inflate(R.layout.timetable_dayindi, null);
+            TextView tv = (TextView) convertView.findViewById(R.id.ttdayindi);
             tv.setText(dayName[position]);
         }
         else if(position%6==0) {

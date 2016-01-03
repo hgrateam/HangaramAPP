@@ -21,6 +21,7 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -44,6 +45,7 @@ import java.util.List;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+    static Context mContext;
     /**
      * Determines whether to always show the simplified settings UI, where
      * settings are presented in a single list. When false, settings are shown
@@ -110,7 +112,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             String key = preference.getKey();
 
             if (key == "delete_meal_db"){
+                DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
+                helper.insert("drop table [if exists] " + DBHelper.TODAYMEAL_TABLE_NAME);
 
+                Log.i("info","delete meal db ");
                 //TODO:급식 디비를 삭제합니다. 디비를 어떻게 건드리는지는 아직 잘 모르니까 나중에 해야징~~~~
 
             }
@@ -166,6 +171,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = SettingsActivity.this;
         setupActionBar();
     }
 

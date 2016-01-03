@@ -52,7 +52,7 @@
                 android:value="com.ateam.hangaramapp.MainActivity" />
             >
         </activity>
-        <activity android:name=".AddSubject"></activity>
+
     </application>
 
 </manifest>
