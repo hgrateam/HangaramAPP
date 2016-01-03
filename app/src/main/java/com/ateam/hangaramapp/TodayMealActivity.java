@@ -291,6 +291,8 @@ public class TodayMealActivity extends AppCompatActivity {
         return (dateBundle);
     }
     private void getMealInfo(){
+        // mealinfo 에 데이터에 저장하고 하이라이트 할거는 하이라이트 한다.
+
         DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
         Date today = new Date();
         Collection<Date> highdates = new ArrayList<Date>(); // 하이라이트 할 날짜 목록
@@ -300,6 +302,7 @@ public class TodayMealActivity extends AppCompatActivity {
 
         Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
 
+        Log.i("info", "getMealInfo - reset other data");
         mealinfo.resetMeal();
         calendar.clearHighlightedDates();
         while (cursor.moveToNext()) {
@@ -365,10 +368,20 @@ public class TodayMealActivity extends AppCompatActivity {
 
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
         calendar.init(calStart.getTime(), calEnd.getTime());
+        calendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
+            @Override
+            public void onDateSelected(Date date) {
+            }
+
+            @Override
+            public void onDateUnselected(Date date) {
+
+            }
+        });
+
 
     }
     private void drawCalendar(){
-        getMealInfo();
         // 달력에 그릴 범위를 계산해온다.
         int[] dateBundle = getDateRange();
 
@@ -393,6 +406,8 @@ public class TodayMealActivity extends AppCompatActivity {
 
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
         calendar.init(calStart.getTime(), calEnd.getTime());
+
+        getMealInfo();
 
         calendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
             @Override
