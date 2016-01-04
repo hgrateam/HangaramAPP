@@ -166,21 +166,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
             break;
             case "DELETE_SCHEDULE_DB": {
-                DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
+                //DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
                 //helper.insert("drop table if exists " + DBHelper.TODAYMEAL_TABLE_NAME);
 
                 Log.i("info","delete schedule db ");
             }
             break;
             case"DELETE_TIMETABLE_DB": {
-                DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
+                DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TIMETABLE_TABLE);
                 helper.insert("drop table if exists " + DBHelper.TIMETABLE_TABLE_NAME);
 
                 Log.i("info","delete timetable db ");
             }
+            break;
             case"DELETE_ALL_DB": {
                 DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
                 helper.insert("drop table if exists " + DBHelper.TODAYMEAL_TABLE_NAME);
+                helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TIMETABLE_TABLE);
                 helper.insert("drop table if exists " + DBHelper.TIMETABLE_TABLE_NAME);
 
                 Log.i("info","delete all db ");
