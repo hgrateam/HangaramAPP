@@ -4,8 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +33,14 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
 
         cellinfos = new ArrayList<cellInfo>();
         ttadapter = new TimeTableAdapter(TimeTable.this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_time_table);
+        setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+
+        if(ab!=null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
         TimeTableGridView gv = (TimeTableGridView) findViewById(R.id.ttgrid);
         gv.setAdapter(ttadapter);
