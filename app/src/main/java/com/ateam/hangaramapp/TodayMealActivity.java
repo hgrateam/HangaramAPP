@@ -38,14 +38,18 @@ public class TodayMealActivity extends AppCompatActivity {
     int startDate = 0, endDate = 0; //날짜 초기화
     private int t_year,t_month,t_day;
 
+    private int parseCount;
+    private int updateCount;
 
-    private static String MSG_PARSE_ERROR = "무엇인가 잘못되었다. 콜미";
-    private static String MSG_NETWORK_SUCKS = "네트워크 상태가 올바르지 않습니다.";
-    private static String MSG_FIRST_NETWORK_SUCKS = "네트워크 상태가 올바르지 않습니다. 처음 접근은 네트워크가 필요합니다.";
-    private static String MSG_ALREADY_EXISTS = "더 이상 갱신할 정보가 없습니다.";
-    private static String MSG_UPDATE="최신 정보를 갱신하였습니다.";
-    private static String MSG_NO_MEAL="해당 날짜의 급식 정보가 없습니다.";
-    private static String MSG_NO_SHOW="보여줄 급식정보가 없습니다.";
+
+
+    private final String MSG_PARSE_ERROR = "무엇인가 잘못되었다. 콜미";
+    private final String MSG_NETWORK_SUCKS = "네트워크 상태가 올바르지 않습니다.";
+    private final String MSG_FIRST_NETWORK_SUCKS = "네트워크 상태가 올바르지 않습니다. 처음 접근은 네트워크가 필요합니다.";
+    private final String MSG_ALREADY_EXISTS = "더 이상 갱신할 정보가 없습니다.";
+    private final String MSG_UPDATE="최신 정보를 갱신하였습니다.";
+    private final String MSG_NO_MEAL="해당 날짜의 급식 정보가 없습니다.";
+    private final String MSG_NO_SHOW="보여줄 급식정보가 없습니다.";
 
     public int intToYear(int d){
         return d/10000;
@@ -98,13 +102,17 @@ public class TodayMealActivity extends AppCompatActivity {
 
         if(startDate == 0) { // 기존 정보가 하나도 없어! -> 정보를 못받아올때는 그릴게 없으니까 그냥 엑티비티를 나갈거임!
             Log.i("info", "기존 정보가 하나도 없군");
-           gotoParse(t_year, t_month, -1, true);
+            parseCount = 3;
+            updateCount = 0;
+            gotoParse(t_year, t_month, -1, true);
             gotoParse(t_year, t_month, 0, true);
             gotoParse(t_year, t_month, 1, true);
         }
 
         else if(endDate < ymdToInt(t_year, t_month, t_day)){ // 오늘자 정보가 없어! -> 파싱
             Log.i("info", "오늘자 정보가 없군!");
+            parseCount = 3;
+            updateCount = 0;
             gotoParse(t_year, t_month, -1, false);
             gotoParse(t_year, t_month, 0, false);
             gotoParse(t_year, t_month, 1, false);
@@ -113,6 +121,7 @@ public class TodayMealActivity extends AppCompatActivity {
     }
     public void gotoParse(int y, int m, int calc,  boolean isFirst){
 
+        parseCount --;
         // boolean isFirst 의 역활 :
         ParseSen ps;
         int year, month;
@@ -188,6 +197,9 @@ public class TodayMealActivity extends AppCompatActivity {
                                 date = ymdToInt(a.getYear(), a.getMonth(), i);
                                 Log.i("info", "insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
                                 helper.insert("insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
+
+                                // 새로운 DB추가! 적어도 하나는 DB에 추가했구나
+                                updateCount++;
                             }
                         }
                     }
@@ -214,40 +226,48 @@ public class TodayMealActivity extends AppCompatActivity {
                         toast.show();
                         finish();
                     }
+
                     Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NETWORK_SUCKS, Toast.LENGTH_LONG);
                     toast.show();
                     drawCalendar();
-
+                    parseCount = 0;
                     return;
                 }
-                if (a.getLastday()==-1){ // 파싱해올거도 없고...
-                    if(dbLastday == -1){ // DB도 없고.. 표시해줄게 없는데?
 
-                        startDate = ymdToInt(t_year, t_month, 1);
-                        endDate = ymdToInt(t_year, t_month, 28);
 
-                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NO_SHOW, Toast.LENGTH_LONG);
-                        toast.show();
-                        progDialog.dismiss();
 
-                        drawNullCalendar();
+                if(parseCount < 0){
+                    return;
+                }
+                // 마지막 파싱일때 토스트 쏴쏴쏴쏴쐈!
+                if(parseCount == 0){
+                    drawCalendar();
+                    if(updateCount == 0){
+                        if(dbLastday == -1){ // DB도 없고.. 표시해줄게 없는데?
 
-                        return;
+                            startDate = ymdToInt(t_year, t_month, 1);
+                            endDate = ymdToInt(t_year, t_month, 28);
+
+                            Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NO_SHOW, Toast.LENGTH_LONG);
+                            toast.show();
+
+                            drawNullCalendar();
+
+                            return;
+                        }
+                        else{
+                            //  파싱해 올건 없는데 기존 데이터는 있네?
+                            Log.i("info", "이미 정보가 있다! 파싱해올 정보가 없다.");
+                            Toast toast = Toast.makeText(TodayMealActivity.this, MSG_ALREADY_EXISTS, Toast.LENGTH_LONG);
+                            toast.show();
+                        }
                     }
+                    // 업데이트 할게 없는데?
                     else{
-                        //  파싱해 올건 없는데 기존 데이터는 있네?
-                        Log.i("info", "이미 정보가 있다! 파싱해올 정보가 없다.");
-                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_ALREADY_EXISTS, Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_UPDATE, Toast.LENGTH_LONG);
                         toast.show();
-                        drawCalendar();
-                        return;
                     }
                 }
-
-                Toast toast = Toast.makeText(TodayMealActivity.this, MSG_UPDATE, Toast.LENGTH_LONG);
-                toast.show();
-
-                drawCalendar();
             }
         });
 
@@ -380,10 +400,13 @@ public class TodayMealActivity extends AppCompatActivity {
         // 달력에 그릴 범위를 계산해온다.
         int[] dateBundle = getDateRange();
 
-        //급식 캘린더의 시작 날짜를 초기화한다.
-        int startYear = intToYear(dateBundle[0]);
-        int startMonth = intToMonth(dateBundle[0]);
-        int startDay = intToDay(dateBundle[0]);
+        int startYear, startMonth, startDay;
+        int endYear, endMonth, endDay;
+        //급식 캘린더의 시작 날짜를
+        // 초기화한다.
+        startYear = intToYear(dateBundle[0]);
+        startMonth = intToMonth(dateBundle[0]);
+        startDay = intToDay(dateBundle[0]);
 
 
         Calendar calStart = Calendar.getInstance();
@@ -392,9 +415,19 @@ public class TodayMealActivity extends AppCompatActivity {
         Log.i("info", "startYear = " + startYear + " 입니다.");
 
         //급식 캘린더의 끝 날짜를 초기화한다.
-        int endYear = intToYear(dateBundle[1]);
-        int endMonth = intToMonth(dateBundle[1]);
-        int endDay = intToDay(dateBundle[1]);
+
+        // 혹시.. 오늘자 데이터가 존재하지 않을 경우
+        if(dateBundle[1] < ymdToInt(t_year,t_month,t_day)){{
+            endYear = t_year;
+            endMonth = t_month;
+            endDay = t_day;
+        }}
+        else {
+            endYear = intToYear(dateBundle[1]);
+            endMonth = intToMonth(dateBundle[1]);
+            endDay = intToDay(dateBundle[1]);
+
+        }
 
         Calendar calEnd = Calendar.getInstance();
         calEnd.set(endYear, --endMonth, ++endDay);
