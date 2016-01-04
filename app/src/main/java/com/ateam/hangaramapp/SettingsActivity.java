@@ -160,29 +160,28 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         switch (preference.getKey()) {
             case "DELETE_MEAL_DB": {
                 DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
-                helper.insert("drop table [if exists] " + DBHelper.TODAYMEAL_TABLE_NAME);
+                helper.insert("drop table if exists " + DBHelper.TODAYMEAL_TABLE_NAME);
 
                 Log.i("info","delete meal db ");
-                //TODO:급식 디비를 삭제합니다. 디비를 어떻게 건드리는지는 아직 잘 모르니까 나중에 해야징~~~~
             }
             break;
             case "DELETE_SCHEDULE_DB": {
                 DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
-                //helper.insert("drop table [if exists] " + DBHelper.TODAYMEAL_TABLE_NAME);
+                //helper.insert("drop table if exists " + DBHelper.TODAYMEAL_TABLE_NAME);
 
                 Log.i("info","delete schedule db ");
             }
             break;
             case"DELETE_TIMETABLE_DB": {
                 DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
-                helper.insert("drop table [if exists] " + DBHelper.TIMETABLE_TABLE_NAME);
+                helper.insert("drop table if exists " + DBHelper.TIMETABLE_TABLE_NAME);
 
                 Log.i("info","delete timetable db ");
             }
             case"DELETE_ALL_DB": {
                 DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
-                helper.insert("drop table [if exists] " + DBHelper.TODAYMEAL_TABLE_NAME);
-                helper.insert("drop table [if exists] " + DBHelper.TIMETABLE_TABLE_NAME);
+                helper.insert("drop table if exists " + DBHelper.TODAYMEAL_TABLE_NAME);
+                helper.insert("drop table if exists " + DBHelper.TIMETABLE_TABLE_NAME);
 
                 Log.i("info","delete all db ");
             }
