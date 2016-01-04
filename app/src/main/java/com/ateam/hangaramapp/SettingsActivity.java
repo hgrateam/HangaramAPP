@@ -260,9 +260,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         // Add 'today meal' preferences, and a corresponding header.
         PreferenceCategory fakeHeader = new PreferenceCategory(this);
-        fakeHeader.setTitle(R.string.pref_header_today_meal);
+        fakeHeader.setTitle(R.string.pref_header_manage_data);
         // Add 'today meal' preferences.
-        addPreferencesFromResource(R.xml.pref_today_meal);
+        addPreferencesFromResource(R.xml.pref_manage_data);
 
         // Add 'notifications' preferences, and a corresponding header.
         fakeHeader = new PreferenceCategory(this);
@@ -325,7 +325,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            addPreferencesFromResource(R.xml.pref_today_meal);
+            addPreferencesFromResource(R.xml.pref_manage_data);
             setHasOptionsMenu(true);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences

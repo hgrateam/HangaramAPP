@@ -5,7 +5,7 @@
     <header
         android:fragment="com.ateam.hangaramapp.SettingsActivity$TodayMealPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
-        android:title="@string/pref_header_today_meal" />
+        android:title="@string/pref_header_manage_data" />
 
     <header
         android:fragment="com.ateam.hangaramapp.SettingsActivity$NotificationPreferenceFragment"

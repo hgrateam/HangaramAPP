@@ -18,7 +18,16 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_today_meal">오늘의 급식</string>
+    <string name="pref_header_manage_data">데이터 관리</string>
+    <string name="pref_delete_meal_db">급식 정보 삭제</string>
+    <string name="pref_delete_meal_db_summary">기기에 저장된 급식 정보를 초기화합니다. 급식 관련 오류가 발생할 때 사용합니다.</string>
+    <string name="pref_delete_timetable_db">시간표 정보 초기화</string>
+    <string name="pref_delete_timetable_db_summary">기기에 저장된 시간표 정보를 초기화합니다. 학기가 바뀔 때 사용합니다.</string>
+    <string name="pref_delete_schedule_db">일정 정보 초기화</string>
+    <string name="pref_delete_schedule_db_summary">기기에 저장된 모든 일정 정보를 초기화합니다.</string>
+    <string name="pref_delete_all_db">한가람앱 초기화</string>
+    <string name="pref_delete_all_db_summary">한가람앱을 초기상태로 되돌립니다.</string>
+
 
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
