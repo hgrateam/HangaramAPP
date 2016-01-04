@@ -14,6 +14,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
+import android.preference.PreferenceScreen;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
@@ -105,26 +106,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     };
 
-    private static Preference.OnPreferenceClickListener onPreferenceClickListener = new Preference.OnPreferenceClickListener(){
-
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            String key = preference.getKey();
-
-            if (key == "delete_meal_db"){
-                DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
-                helper.insert("drop table [if exists] " + DBHelper.TODAYMEAL_TABLE_NAME);
-
-                Log.i("info","delete meal db ");
-                //TODO:급식 디비를 삭제합니다. 디비를 어떻게 건드리는지는 아직 잘 모르니까 나중에 해야징~~~~
-
-            }
-
-            return false;
-        }
-    };
-
-
     /**
      * Helper method to determine if the device has an extra-large screen. For
      * example, 10" tablets are extra-large.
@@ -173,6 +154,41 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         super.onCreate(savedInstanceState);
         mContext = SettingsActivity.this;
         setupActionBar();
+    }
+
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference){
+        switch (preference.getKey()) {
+            case "DELETE_MEAL_DB": {
+                DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
+                helper.insert("drop table [if exists] " + DBHelper.TODAYMEAL_TABLE_NAME);
+
+                Log.i("info","delete meal db ");
+                //TODO:급식 디비를 삭제합니다. 디비를 어떻게 건드리는지는 아직 잘 모르니까 나중에 해야징~~~~
+            }
+            break;
+            case "DELETE_SCHEDULE_DB": {
+                DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
+                //helper.insert("drop table [if exists] " + DBHelper.TODAYMEAL_TABLE_NAME);
+
+                Log.i("info","delete schedule db ");
+            }
+            break;
+            case"DELETE_TIMETABLE_DB": {
+                DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
+                helper.insert("drop table [if exists] " + DBHelper.TIMETABLE_TABLE_NAME);
+
+                Log.i("info","delete timetable db ");
+            }
+            case"DELETE_ALL_DB": {
+                DBHelper helper = new DBHelper(mContext, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
+                helper.insert("drop table [if exists] " + DBHelper.TODAYMEAL_TABLE_NAME);
+                helper.insert("drop table [if exists] " + DBHelper.TIMETABLE_TABLE_NAME);
+
+                Log.i("info","delete all db ");
+            }
+            break;
+        }
+        return false;
     }
 
     /**

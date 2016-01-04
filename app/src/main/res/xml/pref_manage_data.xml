@@ -4,22 +4,22 @@
     <Preference
         android:title="@string/pref_delete_meal_db"
         android:summary="@string/pref_delete_meal_db_summary"
-        android:key="delete_meal_db"/>
+        android:key="DELETE_MEAL_DB"/>
 
     <Preference
         android:title="@string/pref_delete_schedule_db"
         android:summary="@string/pref_delete_schedule_db_summary"
-        android:key="delete_schedule_db"/>
+        android:key="DELETE_SCHEDULE_DB"/>
 
     <Preference
         android:title="@string/pref_delete_timetable_db"
         android:summary="@string/pref_delete_timetable_db_summary"
-        android:key="delete_timetable_db"/>
+        android:key="DELETE_TIMETABLE_DB"/>
 
     <Preference
         android:title="@string/pref_delete_all_db"
         android:summary="@string/pref_delete_all_db_summary"
-        android:key="delete_all_db"/>
+        android:key="DELETE_ALL_DB"/>
 
     <SwitchPreference
         android:defaultValue="true"

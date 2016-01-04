@@ -9,8 +9,8 @@
     <string name="title_activity_main">HangaramAPP</string>
     <string name="today_meal">Coming Soon!</string>
     <string name="pref_header_manage_data">Manage Database</string>
-    <string name="pref_delete_meal_db">Delete Today\'s Meal database</string>
-    <string name="pref_delete_meal_db_summary">Useful when you can\'t access to Today\'s Meal</string>
-    <string name="pref_delete_schedule_db">Delete Schedule database</string>
-    <string name="pref_delete_schedule_db_summary">Use this when you start a new semester</string>
+    <string name="pref_delete_meal_db">Initialize saved Today\'s Meal database</string>
+    <string name="pref_delete_meal_db_summary">Use when meal related error have occured.</string>
+    <string name="pref_delete_schedule_db">Initialize timetable</string>
+    <string name="pref_delete_schedule_db_summary">Use when semester changes.</string>
 </resources>
