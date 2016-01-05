@@ -136,6 +136,7 @@ public class ParseSen {
                             if(d==0) continue;
 
                             if (line.contains("[중식]")) {
+                                Log.i("info",ay+""+mm+""+d+"심봤다!");
                                 if(line.contains("[석식]")) { // 점심 + 저녁
                                     menu_l[d] = line.substring(line.indexOf("[중식]") + "[중식]".length(), line.indexOf("[석식]"));
                                     menu_d[d] = line.substring(line.indexOf("[석식]") + "[석식]".length(), line.length());
@@ -154,21 +155,28 @@ public class ParseSen {
                         }
                     }
                     rd.close();
+                    Log.i("info", "핸들 발싸!" + ay + "" + mm);
+//
+//                    handler.sendMessage(handler.obtainMessage());
 
-                    handler.sendMessage(handler.obtainMessage());
+                    mcallback.OnFinish(ParseSen.this);
 
                 }catch (UnknownHostException e) {
                     Log.i("info", "네트워크 에러! in ParseSen");
                     lastday = -1;
                     error_code = ERR_NET_ERROR;
                     System.out.println("Check Internet Connection!!!");
-                    handler.sendMessage(handler.obtainMessage());
+//                    handler.sendMessage(handler.obtainMessage());
+                    mcallback.OnFinish(ParseSen.this);
+
                 } catch (Exception ex) {
-                    Log.i("info", "네트워크 에러! in ParseSen");
+                    Log.i("info", "팅김! in ParseSen");
                     error_code = ERR_NET_ERROR;
                     lastday = -1;
                     ex.printStackTrace();
-                    handler.sendMessage(handler.obtainMessage());
+//                    handler.sendMessage(handler.obtainMessage());
+                    mcallback.OnFinish(ParseSen.this);
+
                 }
             }
         });

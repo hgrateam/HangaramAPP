@@ -78,7 +78,6 @@ public class TodayMealActivity extends AppCompatActivity {
 
         schedule = (TextView) findViewById(R.id.schedule_today_meal);
         calendar = (CalendarPickerView) findViewById(R.id.calendar_view);
-        drawNullCalendar();
 
         mealinfo = new MealInfo(this);
 
@@ -90,7 +89,6 @@ public class TodayMealActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_today_meal);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
-        // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
 
         GregorianCalendar gcalendar = new GregorianCalendar();
@@ -100,8 +98,22 @@ public class TodayMealActivity extends AppCompatActivity {
 
         Log.i("info", "오늘의 날짜 : " + t_year + "/" + t_month + "/" + t_day);
 
-//        drawCalendar();
+//        drawNullCalendar();
 
+
+        //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
+        calendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
+            @Override
+            public void onDateSelected(Date date) {
+                // public void setText(date)참조;
+                setCellInfo(date);
+            }
+
+            @Override
+            public void onDateUnselected(Date date) {
+
+            }
+        });
 
         int[] dateBundle = getDateRange();
 
@@ -123,13 +135,11 @@ public class TodayMealActivity extends AppCompatActivity {
             gotoParse(t_year, t_month, 1, false);
         }
         else{
-//            getMealInfo();
             drawCalendar();
         }
     }
     public void gotoParse(int y, int m, int calc,  boolean isFirst){
 
-        parseCount --;
         // boolean isFirst 의 역활 :
         ParseSen ps;
         int year, month;
@@ -161,6 +171,7 @@ public class TodayMealActivity extends AppCompatActivity {
             }
 
         }
+        Log.i("info",parseCount+"번째 파싱이 여기서 시작함 ");
         Log.i("info", "Parse Target : "+ year + month+ "  calc : "+calc);
 
         progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -174,6 +185,11 @@ public class TodayMealActivity extends AppCompatActivity {
 
                 // 파싱이 다 되고 난후에 여기가 실행된다.
 
+
+                if(parseCount < 0){
+                    return;
+                }
+                Log.i("info",parseCount+"번째 파싱이 요기서 메시지 받고 시작 ");
                 DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TIMETABLE_TABLE);
                 SQLiteDatabase db = helper.getReadableDatabase();
                 int dbLastday = -1;
@@ -197,6 +213,7 @@ public class TodayMealActivity extends AppCompatActivity {
                 }
                 helper.close();
 
+                Log.i("info", parseCount + "번째 파싱이 끝남. (DB입력전)");
                 if(a.getLastday() != - 1) {
                     for (int i = 1; i <= 31; i++) {
                         if (a.isMenuExist(i)) { // 파싱했는데 해당
@@ -223,7 +240,8 @@ public class TodayMealActivity extends AppCompatActivity {
                 *   dbLastday == -1 : db에 아무것도 없음 ㅋ
                 *
                 * */
-
+                parseCount --;
+                Log.i("info",parseCount+"번째 파싱이 끝남. (네트워크 확인전), "+updateCount+"개의 정보가 업데이트 되었다. "+a.getYear()+""+a.getMonth());
                 if (a.getErrorCode()==ParseSen.ERR_NET_ERROR) {
                     // 인터넷 연결이 영 이상하단 말이야 or 자료가 없어?
                     Log.i("info", "인터넷 확인좀...?");
@@ -242,20 +260,13 @@ public class TodayMealActivity extends AppCompatActivity {
                     return;
                 }
 
-
-
-                if(parseCount < 0){
-                    return;
-                }
                 Log.i("info",parseCount+"번째 파싱이 끝남. ");
+
                 // 마지막 파싱일때 토스트 쏴쏴쏴쏴쐈!
                 if(parseCount == 0){
                     drawCalendar();
                     if(updateCount == 0){
                         if(dbLastday == -1){ // DB도 없고.. 표시해줄게 없는데?
-
-                            startDate = ymdToInt(t_year, t_month, 1);
-                            endDate = ymdToInt(t_year, t_month, 28);
 
                             Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NO_SHOW, Toast.LENGTH_LONG);
                             toast.show();
@@ -286,6 +297,56 @@ public class TodayMealActivity extends AppCompatActivity {
         ps.parse();
     }
 
+    private void drawNullCalendar(){
+        // 달력에 그릴 범위를 계산해온다.
+        //급식 캘린더의 시작 날짜를 초기화한다.
+
+        Calendar calStart = Calendar.getInstance();
+        calStart.set(t_year, t_month-1, 1);
+
+        Calendar calEnd = Calendar.getInstance();
+        calEnd.set(t_year, t_month - 1, 27);
+
+        //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
+        calendar.init(calStart.getTime(), calEnd.getTime());
+
+
+    }
+    private void drawCalendar(){
+        // 달력에 그릴 범위를 계산해온다.
+        Log.i("info", "그린다 달력!");
+
+        int startYear, startMonth, startDay;
+        int endYear, endMonth, endDay;
+
+        int[] dateBundle = getDateRange();
+
+        //급식 캘린더의 시작 날짜를
+        // 초기화한다.
+        startYear = intToYear(dateBundle[0]);
+        startMonth = intToMonth(dateBundle[0]);
+        startDay = intToDay(dateBundle[0]);
+
+        Calendar calStart = Calendar.getInstance();
+        calStart.set(startYear, --startMonth, startDay);
+
+        Log.i("info", "startYear = " + startYear + " 입니다.");
+
+        //급식 캘린더의 끝 날짜를 초기화한다.
+
+        endYear = intToYear(dateBundle[1]);
+        endMonth = intToMonth(dateBundle[1]);
+        endDay = intToDay(dateBundle[1]);
+
+        Calendar calEnd = Calendar.getInstance();
+        calEnd.set(endYear, --endMonth, ++endDay);
+
+        //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
+        calendar.init(calStart.getTime(), calEnd.getTime());
+
+        getMealInfo();
+    }
+
     public int[] getDateRange() {
 
         DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
@@ -311,6 +372,10 @@ public class TodayMealActivity extends AppCompatActivity {
         helper.close();
 
         Log.i("info", "startDate = " + startDate + " 입니다. \n endDate = " + endDate + " 입니다.");
+
+        if(endDate < ymdToInt(t_year,t_month,t_day)){{
+            endDate = ymdToInt(t_year,t_month,t_day);
+        }}
 
         int[] dateBundle = {startDate, endDate};
         return (dateBundle);
@@ -347,6 +412,8 @@ public class TodayMealActivity extends AppCompatActivity {
                 }
             }
         }
+
+
         calendar.highlightDates(highdates);
         // 오늘 날짜를 선택한다.
         try {
@@ -380,86 +447,6 @@ public class TodayMealActivity extends AppCompatActivity {
         }
 
     }
-    private void drawNullCalendar(){
-        // 달력에 그릴 범위를 계산해온다.
-        //급식 캘린더의 시작 날짜를 초기화한다.
-
-        Calendar calStart = Calendar.getInstance();
-        calStart.set(t_year, t_month-1, 1);
-
-        Calendar calEnd = Calendar.getInstance();
-        calEnd.set(t_year, t_month-1, 27);
-
-        //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
-        calendar.init(calStart.getTime(), calEnd.getTime());
-        calendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
-            @Override
-            public void onDateSelected(Date date) {
-            }
-
-            @Override
-            public void onDateUnselected(Date date) {
-
-            }
-        });
-
-
-    }
-    private void drawCalendar(){
-        // 달력에 그릴 범위를 계산해온다.
-        Log.i("info", "그린다 달력!");
-        int[] dateBundle = getDateRange();
-
-        int startYear, startMonth, startDay;
-        int endYear, endMonth, endDay;
-        //급식 캘린더의 시작 날짜를
-        // 초기화한다.
-        startYear = intToYear(dateBundle[0]);
-        startMonth = intToMonth(dateBundle[0]);
-        startDay = intToDay(dateBundle[0]);
-
-
-        Calendar calStart = Calendar.getInstance();
-        calStart.set(startYear, --startMonth, startDay);
-
-        Log.i("info", "startYear = " + startYear + " 입니다.");
-
-        //급식 캘린더의 끝 날짜를 초기화한다.
-
-        // 혹시.. 오늘자 데이터가 존재하지 않을 경우
-        if(dateBundle[1] < ymdToInt(t_year,t_month,t_day)){{
-            endYear = t_year;
-            endMonth = t_month;
-            endDay = t_day;
-        }}
-        else {
-            endYear = intToYear(dateBundle[1]);
-            endMonth = intToMonth(dateBundle[1]);
-            endDay = intToDay(dateBundle[1]);
-
-        }
-
-        Calendar calEnd = Calendar.getInstance();
-        calEnd.set(endYear, --endMonth, ++endDay);
-
-        //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
-        calendar.init(calStart.getTime(), calEnd.getTime());
-
-        getMealInfo();
-
-        calendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
-            @Override
-            public void onDateSelected(Date date) {
-                // public void setText(date)참조;
-                setCellInfo(date);
-            }
-            @Override
-            public void onDateUnselected(Date date) {
-
-            }
-        });
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
