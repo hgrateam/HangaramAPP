@@ -22,3 +22,4 @@
         android:propertyName="alpha"
         android:startOffset="@integer/card_flip_time_half"
         android:duration="1" />
+</set>
