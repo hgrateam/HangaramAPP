@@ -90,7 +90,26 @@ public class MealInfo {
 }
 
 class  mealData{
-    String lunch;
-    String dinner;
-    int date;
+    public mealData(int date, String lunch, String dinner, boolean check){
+        this.date = date;
+        this.lunch = lunch;
+        this.dinner = dinner;
+        this.check = check;
+    }
+    public mealData(mealData mealdata, boolean check){
+        this.date = mealdata.getDate();
+        this.lunch = mealdata.getLunch();
+        this.dinner = mealdata.getDinner();
+        this.check = check;
+    }
+    private String lunch;
+    private String dinner;
+    private int date;
+    private boolean check;
+    public String getLunch(){ return lunch; }
+    public String getDinner(){ return dinner; }
+    public boolean getCheck(){ return check;}
+    public void setCheck(){check = true;}
+    public int getDate(){ return date;}
+
 }

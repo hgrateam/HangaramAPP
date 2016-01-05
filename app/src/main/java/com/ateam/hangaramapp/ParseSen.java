@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 /**
  * Created by Suhyun on 2015-12-11.
@@ -51,15 +52,7 @@ public class ParseSen {
             menu_d[i]=menu_l[i]="";
         }
         lastday = -1;
-
     }
-
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            mcallback.OnFinish(ParseSen.this);
-        }
-    };
 
     public void setIsFirst(boolean a){  isFirst = a;    };
     public boolean getIsFirst(){ return isFirst;}
@@ -67,127 +60,115 @@ public class ParseSen {
     public boolean isMenuExist(int d){
         return check[d];
     }
-    private void setCheck(int d){
-        check[d]=true;
-
-        if(d>lastday){
-            lastday = d;
-        }
-    }
     public int getLastday(){
         return lastday;
     }
-    public String getLunch(int d){
-        if(isMenuExist(d)) {
-            // 원하는 꼴로 수정하셈 (menu_l[날짜] = 점심 메뉴 menu_d[날짜] = 저녁메뉴
-//            return "점심 : " + menu_l[d] + "저녁 : " + menu_d[d];
-            return menu_l[d];
+    public void parse_part(int m, int y, int calc, ArrayList<mealData> mealDatas){
+        Log.i("info", "parse_part"+m+""+y);
+        if(calc == -1){
+            if(m==1){
+                m=12;
+                y--;
+            }
+            else
+                m--;
+
         }
-        else return PARSE_ERROR;
-    }
-    public String getDinner(int d){
-        if(isMenuExist(d)) {
-            // 원하는 꼴로 수정하셈 (menu_l[날짜] = 점심 메뉴 menu_d[날짜] = 저녁메뉴
-            return menu_d[d];
+        else if(calc == 1){
+            if(m==12){
+                m=1;
+                y++;
+            }
+            else
+                m++;
         }
-        else return PARSE_ERROR;
-    }
-    public void parse(){
-        Thread myThread = new Thread(new Runnable() {
-            public void run() {
-                String urlToRead="http://hes.sen.go.kr/spr_sci_md00_001.do?";
-                urlToRead+="mm="+mm;
-                urlToRead+="&ay="+ay;
-                error_code = ERR_NO_ERROR;
-                int time = 0;
-                urlToRead+="&schulCode=B100000549&schulCrseScCode=4";
+        String urlToRead="http://hes.sen.go.kr/spr_sci_md00_001.do?";
+        urlToRead+="mm="+m;
+        urlToRead+="&ay="+y;
+        error_code = ERR_NO_ERROR;
+        urlToRead+="&schulCode=B100000549&schulCrseScCode=4";
+        Log.i("info", "PARSE TARGET : " + urlToRead);
 
-                Log.i("info", "PARSE TARGET : " + urlToRead);
+        URL url; // The URL to read
+        HttpURLConnection conn; // The actual connection to the web page
+        BufferedReader rd; // Used to read results from the web page
+        String line=""; // An individual line of the web page HTML
 
-                URL url; // The URL to read
-                HttpURLConnection conn; // The actual connection to the web page
-                BufferedReader rd; // Used to read results from the web page
-                String line; // An individual line of the web page HTML
+        try {
+            url = new URL(urlToRead);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-                try {
-                    url = new URL(urlToRead);
-                    conn = (HttpURLConnection) url.openConnection();
-                    conn.setRequestMethod("GET");
-                    rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            while ((line = rd.readLine()) != null) {
 
-                    while ((line = rd.readLine()) != null) {
+                if(line.contains("<td>")){
+                    // 이상한건 삭제한다.
+                    line = line.replace("\t","");
+                    line = line.replace("</td>","");
+                    line = line.replace("<br />"," ");
 
-                        if(line.contains("<td>")){
-                            // 이상한건 삭제한다.
-                            line = line.replace("\t","");
-                            line = line.replace("</td>","");
-                            line = line.replace("<br />"," ");
+                    int d=0; // 일자
 
-                            int d=0; // 일자
-
-                            if(line.contains("[")) {
-                                if (line.substring(line.indexOf("<td>") + 1, line.indexOf("[")) != null) {
-                                    d = Integer.parseInt(line.substring(line.indexOf("<td>") + "<td>".length(), line.indexOf("[")).replace(" ",""));
-                                }
-                            }
-
-                            line = line.replace("<td>","");
-
-                            if(d==0) continue;
-
-                            if (line.contains("[중식]")) {
-                                Log.i("info",ay+""+mm+""+d+"심봤다!");
-                                if(line.contains("[석식]")) { // 점심 + 저녁
-                                    menu_l[d] = line.substring(line.indexOf("[중식]") + "[중식]".length(), line.indexOf("[석식]"));
-                                    menu_d[d] = line.substring(line.indexOf("[석식]") + "[석식]".length(), line.length());
-
-                                    setCheck(d);
-                                }
-                                else{ // only 점심
-                                    menu_l[d] = line.substring(line.indexOf("[중식]") + "[중식]".length(), line.length());
-                                    setCheck(d);
-                                }
-                            }
-                            else if(line.contains("[석식]")){ // only 저녁
-                                menu_d[d] = line.substring(line.indexOf("[석식]") + "[석식]".length(), line.length());
-                                setCheck(d);
-                            }
+                    if(line.contains("[")) {
+                        if (line.substring(line.indexOf("<td>") + 1, line.indexOf("[")) != null) {
+                            d = Integer.parseInt(line.substring(line.indexOf("<td>") + "<td>".length(), line.indexOf("[")).replace(" ",""));
                         }
                     }
-                    rd.close();
-                    Log.i("info", "핸들 발싸!" + ay + "" + mm);
 
-                    mcallback.OnFinish(ParseSen.this);
-                    return;
+                    line = line.replace("<td>","");
 
-                }catch (UnknownHostException e) {
-                    Log.i("info", "네트워크 에러! in ParseSen");
-                    lastday = -1;
-                    error_code = ERR_NET_ERROR;
-                    System.out.println("Check Internet Connection!!!");
-                    mcallback.OnFinish(ParseSen.this);
-                    return;
+                    if(d==0) continue;
 
-                } catch (Exception ex) {
-                    Log.i("info", "팅김! in ParseSen");
-//                    error_code = ERR_NET_ERROR;
-                    lastday = -1;
-                    ex.printStackTrace();
-                    mcallback.OnFinish(ParseSen.this);
-                    Log.i("info", "핸들 발싸!" + ay + "" + mm);
-                    return;
+                    if (line.contains("[중식]")) {
+                        if(line.contains("[석식]")) { // 점심 + 저녁
+                            String lunch = line.substring(line.indexOf("[중식]") + "[중식]".length(), line.indexOf("[석식]"));
+                            String dinner = line.substring(line.indexOf("[석식]") + "[석식]".length(), line.length());
+                            mealDatas.add(new mealData(y * 10000 + m * 100 + d, lunch, dinner, false));
+                            Log.i("info", y+""+m+""+d+" | "+lunch+ "|"+ dinner + "on ParseSen");
+
+                        }
+                        else{ // only 점심
+                            String lunch = line.substring(line.indexOf("[중식]") + "[중식]".length(), line.length());
+                            mealDatas.add(new mealData(y * 10000 + m * 100 + d, lunch, "", false));
+                            Log.i("info", y + "" + m + "" + d + " | " + lunch + "|" +  "on ParseSen");
+                        }
+                    }
+                    else if(line.contains("[석식]")){ // only 저녁
+                        String dinner = line.substring(line.indexOf("[석식]") + "[석식]".length(), line.length());
+                        mealDatas.add(new mealData(y * 10000 + m * 100 + d, "", dinner, false));
+                        Log.i("info", y + "" + m + "" + d + " | " +  "|" + dinner + "on ParseSen");
+                    }
                 }
+            }
+            rd.close();
+            //return;
+
+        }catch (UnknownHostException e) {
+            Log.i("info", "네트워크 에러! in ParseSen");
+            error_code = ERR_NET_ERROR;
+            System.out.println("Check Internet Connection!!!");
+            return;
+
+        } catch (Exception ex) {
+            Log.i("info", "팅김! in ParseSen"+line);
+//                    error_code = ERR_NET_ERROR;
+            ex.printStackTrace();
+        }
+
+    }
+    public void parse(final ArrayList<mealData> mealDatas){
+        Thread myThread = new Thread(new Runnable() {
+            public void run() {
+                parse_part(mm, ay, -1, mealDatas);
+                parse_part(mm, ay, 0, mealDatas);
+                parse_part(mm, ay, 1, mealDatas);
+                mcallback.OnFinish(ParseSen.this);
             }
         });
         myThread.start();
     }
-    void setMM(int m){
-        mm = m;
-    }
-    void setAY(int y){
-        ay =y;
-    }
-
+    void setDate(int m, int y){ mm=m; ay=y;}
     int getMonth(){
         return mm;
     }

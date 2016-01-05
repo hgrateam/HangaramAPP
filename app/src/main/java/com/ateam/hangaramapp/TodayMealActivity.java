@@ -36,7 +36,6 @@ public class TodayMealActivity extends AppCompatActivity {
     private boolean dbCheck[];
     private int t_year,t_month,t_day;
 
-    private int parseCount;
     private int updateCount;
 
     ArrayList<mealData> mealDatas;
@@ -73,7 +72,6 @@ public class TodayMealActivity extends AppCompatActivity {
         // 잠시 버튼은 안보이게...
         button1.setVisibility(View.GONE);
 
-        mealDatas = new ArrayList<>(200);
         schedule = (TextView) findViewById(R.id.schedule_today_meal);
         calendar = (CalendarPickerView) findViewById(R.id.calendar_view);
 
@@ -110,63 +108,32 @@ public class TodayMealActivity extends AppCompatActivity {
             }
         });
 
+        mealDatas = new ArrayList<>(200);
+
         int[] dateBundle = getDateRange();
 
         if(dateBundle[0] == 0) { // 기존 정보가 하나도 없어! -> 정보를 못받아올때는 그릴게 없으니까 그냥 엑티비티를 나갈거임!
             Log.i("info", "기존 정보가 하나도 없군");
-            parseCount = 0;
-            updateCount = 0;
-            gotoParse(t_year, t_month, -1, true);
-            gotoParse(t_year, t_month, 0, true);
-            gotoParse(t_year, t_month, 1, true);
+            gotoParse(t_year, t_month,  true, mealDatas);
         }
         else if(dateBundle[1] < ymdToInt(t_year, t_month, t_day)){ // 오늘자 정보가 없어! -> 파싱
             Log.i("info", "오늘자 정보가 없군!");
-            parseCount = 0;
-            updateCount = 0;
-            gotoParse(t_year, t_month, -1, false);
-            gotoParse(t_year, t_month, 0, false);
-            gotoParse(t_year, t_month, 1, false);
+            gotoParse(t_year, t_month, false, mealDatas);
         }
         else{
             drawCalendar();
         }
 
     }
-    public void gotoParse(int y, int m, int calc,  boolean isFirst){
+    public void gotoParse(int y, int m,  boolean isFirst, final ArrayList<mealData> mealDatas){
 
         // boolean isFirst 의 역활 :
         int year, month;
+
         year = y;
         month = m;
 
-        if(calc != 0 ){
-            if(calc>0){
-                if(month + calc >=12){
-                    year++;
-                    month+=calc;
-                    month-=12;
-                    Log.i("info", " 더한다!");
-                }
-                else{
-                    month+=calc;
-                }
-            }
-            else{
-                if(month + calc <= 0){
-                    year--;
-                    month+=calc;
-                    month+=12;
-                    Log.i("info", " 뺀다!");
-                }
-                else{
-                    month+=calc;
-                }
-            }
-
-        }
-        Log.i("info",parseCount+"번째 파싱이 여기서 시작함 ");
-        Log.i("info", "Parse Target : " + year + month + "  calc : " + calc);
+        Log.i("info", "Parse Target : " + year + month + "  calc : ");
 
         progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progDialog.setMessage("정보를 받아오는 중입니다..");
@@ -177,22 +144,9 @@ public class TodayMealActivity extends AppCompatActivity {
             @Override
             public void OnFinish(ParseSen a) {
 
-                // 파싱이 다 되고 난후에 여기가 실행된다.
-
-
-                if(parseCount < 0){
-                    return;
-                }
-                Log.i("info",parseCount+"번째 파싱이 요기서 메시지 받고 시작 ");
                 DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TIMETABLE_TABLE);
                 SQLiteDatabase db = helper.getReadableDatabase();
                 int dbLastday = -1;
-
-                for (int i = 0; i < 32; i++) {
-                    dbCheck[i] = false;
-                }
-
-                Log.i("info", "제일 최근 정보 : " + a.getLastday() + "일자 정보");
 
                 Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
                 int date;
@@ -201,25 +155,26 @@ public class TodayMealActivity extends AppCompatActivity {
                     if (cursor.getInt(1) > dbLastday) {
                         dbLastday = date;
                     }
-                    if (intToYear(date) == a.getYear() && intToMonth(date) == a.getMonth()) {
-                        dbCheck[intToDay(date)] = true;
+                    for(int i=0;i<mealDatas.size();i++){
+                        if(mealDatas.get(i).getDate() == date){
+                            mealDatas.set(i, new mealData(mealDatas.get(i),true));
+                            break;
+                        }
                     }
                 }
                 helper.close();
 
-                Log.i("info", parseCount + "번째 파싱이 끝남. (DB입력전)");
-                if(a.getLastday() != - 1) {
-                    for (int i = 1; i <= 31; i++) {
-                        if (a.isMenuExist(i)) { // 파싱했는데 해당
-                            if (!dbCheck[i]) { // 이미 있는경우는 제외 없으면 DB추가
+                Log.i("info", "ParseSen 에서 긁어온 정보 수 = "+mealDatas.size());
+                if (mealDatas.size()!=0) {
+                    for(int i=0;i<mealDatas.size();i++){
+                        if(mealDatas.get(i).getCheck()==false) {
 
-                                date = ymdToInt(a.getYear(), a.getMonth(), i);
-                                Log.i("info", "insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
-                                helper.insert("insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + a.getLunch(i) + "', '" + a.getDinner(i) + "');");
+                            date = mealDatas.get(i).getDate();
+                            Log.i("info", "insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + mealDatas.get(i).getLunch() + "', '" + mealDatas.get(i).getDinner() + "');");
+                            helper.insert("insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + mealDatas.get(i).getLunch() + "', '" + mealDatas.get(i).getDinner() + "');");
 
-                                // 새로운 DB추가! 적어도 하나는 DB에 추가했구나
-                                updateCount++;
-                            }
+                            // 새로운 DB추가! 적어도 하나는 DB에 추가했구나
+                            updateCount++;
                         }
                     }
                 }
@@ -234,13 +189,11 @@ public class TodayMealActivity extends AppCompatActivity {
                 *   dbLastday == -1 : db에 아무것도 없음 ㅋ
                 *
                 * */
-                Log.i("info",parseCount+"번째 파싱이 끝남. (네트워크 확인전), "+updateCount+"개의 정보가 업데이트 되었다. "+a.getYear()+""+a.getMonth());
-                if (a.getErrorCode()==ParseSen.ERR_NET_ERROR) {
+                if (a.getErrorCode() == ParseSen.ERR_NET_ERROR) {
                     // 인터넷 연결이 영 이상하단 말이야 or 자료가 없어?
                     Log.i("info", "인터넷 확인좀...?");
 
-
-                    if(a.getIsFirst()){
+                    if (a.getIsFirst()) {
                         Toast toast = Toast.makeText(TodayMealActivity.this, MSG_FIRST_NETWORK_SUCKS, Toast.LENGTH_LONG);
                         toast.show();
                         finish();
@@ -249,48 +202,40 @@ public class TodayMealActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NETWORK_SUCKS, Toast.LENGTH_LONG);
                     toast.show();
                     drawCalendar();
-//                    parseCount = 0;
                     finish();
                 }
-                Log.i("info",parseCount+1+"번째 파싱이 끝남. ");
-
-                parseCount ++;
 
 
                 // 마지막 파싱일때 토스트 쏴쏴쏴쏴쐈!
-                if(parseCount == 3){
 
-                    drawCalendar();
-                    if(updateCount == 0){
-                        if(dbLastday == -1){ // DB도 없고.. 표시해줄게 없는데?
+                drawCalendar();
+                if (updateCount == 0) {
+                    if (dbLastday == -1) { // DB도 없고.. 표시해줄게 없는데?
 
-                            Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NO_SHOW, Toast.LENGTH_LONG);
-                            toast.show();
+                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NO_SHOW, Toast.LENGTH_LONG);
+                        toast.show();
 
-                            drawNullCalendar();
+                        drawNullCalendar();
 
-                            return;
-                        }
-                        else{
-                            //  파싱해 올건 없는데 기존 데이터는 있네?
-                            Log.i("info", "이미 정보가 있다! 파싱해올 정보가 없다.");
-                            Toast toast = Toast.makeText(TodayMealActivity.this, MSG_ALREADY_EXISTS, Toast.LENGTH_LONG);
-                            toast.show();
-                        }
-                    }
-                    // 업데이트 할게 없는데?
-                    else{
-                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_UPDATE, Toast.LENGTH_LONG);
+                        return;
+                    } else {
+                        //  파싱해 올건 없는데 기존 데이터는 있네?
+                        Log.i("info", "이미 정보가 있다! 파싱해올 정보가 없다.");
+                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_ALREADY_EXISTS, Toast.LENGTH_LONG);
                         toast.show();
                     }
+                }
+                // 업데이트 할게 없는데?
+                else {
+                    Toast toast = Toast.makeText(TodayMealActivity.this, MSG_UPDATE, Toast.LENGTH_LONG);
+                    toast.show();
                 }
             }
         });
 
-        ps.setMM(month);
-        ps.setAY(year);
+        ps.setDate(month, year);
         ps.setIsFirst(isFirst);
-        ps.parse();
+        ps.parse(mealDatas);
     }
 
     private void drawNullCalendar(){
