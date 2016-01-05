@@ -117,11 +117,6 @@ public class TimeTableDialogFragment extends DialogFragment {
 
                         cellinfos.set(array_pos,new cellInfo(value, day, column, Memo));
 
-/*                        cellinfos.get(array_pos).setMemo(value);
-                        cellinfos.get(array_pos).setMemo(Memo);
-  */
-
-
                         for(int i=0;i<cellinfos.size();i++){
                             Log.i("info", i+" | cellinfos log : "+cellinfos.get(i).getName());
                         }
@@ -136,7 +131,6 @@ public class TimeTableDialogFragment extends DialogFragment {
                 })
                 .setTitle(dayName[cellinfos.get(array_pos).getDay() - 1] + "요일 " + cellinfos.get(array_pos).getColumn() + "교시 과목 설정")
         ;
-//        return super.onCreateDialog(savedInstanceState);
         return builder.create();
     }
     @Override

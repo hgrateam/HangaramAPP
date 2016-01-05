@@ -78,6 +78,8 @@ public class TodayMealActivity extends AppCompatActivity {
 
         schedule = (TextView) findViewById(R.id.schedule_today_meal);
         calendar = (CalendarPickerView) findViewById(R.id.calendar_view);
+        drawNullCalendar();
+
         mealinfo = new MealInfo(this);
 
         dbCheck = new boolean[33];
@@ -98,9 +100,12 @@ public class TodayMealActivity extends AppCompatActivity {
 
         Log.i("info", "오늘의 날짜 : " + t_year + "/" + t_month + "/" + t_day);
 
-        drawCalendar();
+//        drawCalendar();
 
-        if(startDate == 0) { // 기존 정보가 하나도 없어! -> 정보를 못받아올때는 그릴게 없으니까 그냥 엑티비티를 나갈거임!
+
+        int[] dateBundle = getDateRange();
+
+        if(dateBundle[0] == 0) { // 기존 정보가 하나도 없어! -> 정보를 못받아올때는 그릴게 없으니까 그냥 엑티비티를 나갈거임!
             Log.i("info", "기존 정보가 하나도 없군");
             parseCount = 3;
             updateCount = 0;
@@ -109,7 +114,7 @@ public class TodayMealActivity extends AppCompatActivity {
             gotoParse(t_year, t_month, 1, true);
         }
 
-        else if(endDate < ymdToInt(t_year, t_month, t_day)){ // 오늘자 정보가 없어! -> 파싱
+        else if(dateBundle[1] < ymdToInt(t_year, t_month, t_day)){ // 오늘자 정보가 없어! -> 파싱
             Log.i("info", "오늘자 정보가 없군!");
             parseCount = 3;
             updateCount = 0;
@@ -117,7 +122,10 @@ public class TodayMealActivity extends AppCompatActivity {
             gotoParse(t_year, t_month, 0, false);
             gotoParse(t_year, t_month, 1, false);
         }
-        else getMealInfo();
+        else{
+//            getMealInfo();
+            drawCalendar();
+        }
     }
     public void gotoParse(int y, int m, int calc,  boolean isFirst){
 
@@ -239,6 +247,7 @@ public class TodayMealActivity extends AppCompatActivity {
                 if(parseCount < 0){
                     return;
                 }
+                Log.i("info",parseCount+"번째 파싱이 끝남. ");
                 // 마지막 파싱일때 토스트 쏴쏴쏴쏴쐈!
                 if(parseCount == 0){
                     drawCalendar();
@@ -398,6 +407,7 @@ public class TodayMealActivity extends AppCompatActivity {
     }
     private void drawCalendar(){
         // 달력에 그릴 범위를 계산해온다.
+        Log.i("info", "그린다 달력!");
         int[] dateBundle = getDateRange();
 
         int startYear, startMonth, startDay;
