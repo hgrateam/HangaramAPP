@@ -47,6 +47,36 @@ public class TodayMealActivity extends AppCompatActivity {
     private final String MSG_NO_MEAL="해당 날짜의 급식 정보가 없습니다.";
     private final String MSG_NO_SHOW="보여줄 급식정보가 없습니다.";
 
+    boolean isOnRage(int date){
+        int y=intToYear(date);
+        int m=intToMonth(date);
+        int d=intToDay(date);
+        if(m==1){
+            if(y==t_year-1 && m == 12){
+                return true;
+            }
+            if(y==t_year && m == 2){
+                return true;
+            }
+        }
+        else if(m==12){
+            if(y==t_year+1 && m == 1){
+                return true;
+            }
+            if(y==t_year && m == 11){
+                return true;
+            }
+
+        }
+        else{
+            if(y==t_year) {
+                if (m - t_month == 1 || m - t_month == -1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public int intToYear(int d){
         return d/10000;
     }
@@ -107,6 +137,8 @@ public class TodayMealActivity extends AppCompatActivity {
 
             }
         });
+
+        drawNullCalendar();
 
         mealDatas = new ArrayList<>(200);
 
@@ -243,10 +275,10 @@ public class TodayMealActivity extends AppCompatActivity {
         //급식 캘린더의 시작 날짜를 초기화한다.
 
         Calendar calStart = Calendar.getInstance();
-        calStart.set(t_year, t_month-1, 1);
+        calStart.set(t_year-2, t_month-1, 1);
 
         Calendar calEnd = Calendar.getInstance();
-        calEnd.set(t_year, t_month - 1, 27);
+        calEnd.set(t_year+2, t_month - 1, 27);
 
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
         calendar.init(calStart.getTime(), calEnd.getTime());
@@ -271,8 +303,6 @@ public class TodayMealActivity extends AppCompatActivity {
         Calendar calStart = Calendar.getInstance();
         calStart.set(startYear, --startMonth, startDay);
 
-        Log.i("info", "startYear = " + startYear + " 입니다.");
-
         //급식 캘린더의 끝 날짜를 초기화한다.
 
         endYear = intToYear(dateBundle[1]);
@@ -286,6 +316,14 @@ public class TodayMealActivity extends AppCompatActivity {
         calendar.init(calStart.getTime(), calEnd.getTime());
 
         getMealInfo(dateBundle[0], dateBundle[1]);
+
+        try {
+            calendar.selectDate(new Date());
+        }catch (IllegalArgumentException exception){
+        }
+        calendar.scrollToDate(new Date());
+        setCellInfo(new Date());
+
     }
 
     public int[] getDateRange() {
@@ -327,7 +365,7 @@ public class TodayMealActivity extends AppCompatActivity {
 
         DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
         Date today = new Date();
-        Collection<Date> highdates = new ArrayList<Date>(); // 하이라이트 할 날짜 목록
+        Collection<Date> highdates = new ArrayList<Date>(200); // 하이라이트 할 날짜 목록
         int date;
 
         SQLiteDatabase db = helper.getReadableDatabase();
@@ -337,6 +375,7 @@ public class TodayMealActivity extends AppCompatActivity {
         Log.i("info", "getMealInfo - reset other data");
         mealinfo.resetMeal();
         calendar.clearHighlightedDates();
+
         while (cursor.moveToNext()) {
             date = cursor.getInt(1);
             if(startDate <= date && date <= endDate) {
@@ -358,12 +397,6 @@ public class TodayMealActivity extends AppCompatActivity {
 
         calendar.highlightDates(highdates);
         // 오늘 날짜를 선택한다.
-        try {
-            calendar.selectDate(today);
-        }catch (IllegalArgumentException exception){
-        }
-        calendar.scrollToDate(today);
-        setCellInfo(today);
         helper.close();
 
     }

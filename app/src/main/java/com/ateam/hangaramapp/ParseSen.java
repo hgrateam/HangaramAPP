@@ -48,7 +48,7 @@ public class ParseSen {
         menu_l = new String[1000];
         isFirst = false;
         for(int i=0;i<=31;i++) {
-           check[i] = false;
+            check[i] = false;
             menu_d[i]=menu_l[i]="";
         }
         lastday = -1;
@@ -157,13 +157,25 @@ public class ParseSen {
         }
 
     }
+    final Handler handler = new Handler()
+
+    {
+        @Override
+        public void handleMessage(Message msg) {
+            mcallback.OnFinish(ParseSen.this);
+        }
+
+
+    };
     public void parse(final ArrayList<mealData> mealDatas){
         Thread myThread = new Thread(new Runnable() {
             public void run() {
                 parse_part(mm, ay, -1, mealDatas);
                 parse_part(mm, ay, 0, mealDatas);
                 parse_part(mm, ay, 1, mealDatas);
-                mcallback.OnFinish(ParseSen.this);
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
+                return;
             }
         });
         myThread.start();
