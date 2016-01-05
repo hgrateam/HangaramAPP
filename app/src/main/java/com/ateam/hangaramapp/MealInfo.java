@@ -85,8 +85,12 @@ public class MealInfo {
             _str = _str.replaceAll(allergiesym[i],"");
         }
         return _str;
-
     }
     public int getCnt(){ return cnt; }
+}
 
+class  mealData{
+    String lunch;
+    String dinner;
+    int date;
 }

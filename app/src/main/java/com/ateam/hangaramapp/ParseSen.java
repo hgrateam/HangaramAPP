@@ -156,27 +156,26 @@ public class ParseSen {
                     }
                     rd.close();
                     Log.i("info", "핸들 발싸!" + ay + "" + mm);
-//
-//                    handler.sendMessage(handler.obtainMessage());
 
                     mcallback.OnFinish(ParseSen.this);
+                    return;
 
                 }catch (UnknownHostException e) {
                     Log.i("info", "네트워크 에러! in ParseSen");
                     lastday = -1;
                     error_code = ERR_NET_ERROR;
                     System.out.println("Check Internet Connection!!!");
-//                    handler.sendMessage(handler.obtainMessage());
                     mcallback.OnFinish(ParseSen.this);
+                    return;
 
                 } catch (Exception ex) {
                     Log.i("info", "팅김! in ParseSen");
-                    error_code = ERR_NET_ERROR;
+//                    error_code = ERR_NET_ERROR;
                     lastday = -1;
                     ex.printStackTrace();
-//                    handler.sendMessage(handler.obtainMessage());
                     mcallback.OnFinish(ParseSen.this);
-
+                    Log.i("info", "핸들 발싸!" + ay + "" + mm);
+                    return;
                 }
             }
         });

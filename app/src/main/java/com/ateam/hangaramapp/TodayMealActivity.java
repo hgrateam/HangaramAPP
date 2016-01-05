@@ -33,16 +33,13 @@ public class TodayMealActivity extends AppCompatActivity {
     private TextView schedule;
     private MealInfo mealinfo;
 
-
     private boolean dbCheck[];
-    int startDate = 0, endDate = 0; //날짜 초기화
     private int t_year,t_month,t_day;
 
     private int parseCount;
     private int updateCount;
 
-
-
+    ArrayList<mealData> mealDatas;
     private final String MSG_PARSE_ERROR = "무엇인가 잘못되었다. 콜미";
     private final String MSG_NETWORK_SUCKS = "네트워크 상태가 올바르지 않습니다.";
     private final String MSG_FIRST_NETWORK_SUCKS = "네트워크 상태가 올바르지 않습니다. 처음 접근은 네트워크가 필요합니다.";
@@ -76,6 +73,7 @@ public class TodayMealActivity extends AppCompatActivity {
         // 잠시 버튼은 안보이게...
         button1.setVisibility(View.GONE);
 
+        mealDatas = new ArrayList<>(200);
         schedule = (TextView) findViewById(R.id.schedule_today_meal);
         calendar = (CalendarPickerView) findViewById(R.id.calendar_view);
 
@@ -98,9 +96,6 @@ public class TodayMealActivity extends AppCompatActivity {
 
         Log.i("info", "오늘의 날짜 : " + t_year + "/" + t_month + "/" + t_day);
 
-//        drawNullCalendar();
-
-
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
         calendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
             @Override
@@ -119,16 +114,15 @@ public class TodayMealActivity extends AppCompatActivity {
 
         if(dateBundle[0] == 0) { // 기존 정보가 하나도 없어! -> 정보를 못받아올때는 그릴게 없으니까 그냥 엑티비티를 나갈거임!
             Log.i("info", "기존 정보가 하나도 없군");
-            parseCount = 3;
+            parseCount = 0;
             updateCount = 0;
             gotoParse(t_year, t_month, -1, true);
             gotoParse(t_year, t_month, 0, true);
             gotoParse(t_year, t_month, 1, true);
         }
-
         else if(dateBundle[1] < ymdToInt(t_year, t_month, t_day)){ // 오늘자 정보가 없어! -> 파싱
             Log.i("info", "오늘자 정보가 없군!");
-            parseCount = 3;
+            parseCount = 0;
             updateCount = 0;
             gotoParse(t_year, t_month, -1, false);
             gotoParse(t_year, t_month, 0, false);
@@ -137,11 +131,11 @@ public class TodayMealActivity extends AppCompatActivity {
         else{
             drawCalendar();
         }
+
     }
     public void gotoParse(int y, int m, int calc,  boolean isFirst){
 
         // boolean isFirst 의 역활 :
-        ParseSen ps;
         int year, month;
         year = y;
         month = m;
@@ -172,13 +166,13 @@ public class TodayMealActivity extends AppCompatActivity {
 
         }
         Log.i("info",parseCount+"번째 파싱이 여기서 시작함 ");
-        Log.i("info", "Parse Target : "+ year + month+ "  calc : "+calc);
+        Log.i("info", "Parse Target : " + year + month + "  calc : " + calc);
 
         progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progDialog.setMessage("정보를 받아오는 중입니다..");
         progDialog.show();
 
-        ps = new ParseSen();
+        ParseSen ps = new ParseSen();
         ps.setCallBackListener(new ParseSen.ParseCallBack() {
             @Override
             public void OnFinish(ParseSen a) {
@@ -240,7 +234,6 @@ public class TodayMealActivity extends AppCompatActivity {
                 *   dbLastday == -1 : db에 아무것도 없음 ㅋ
                 *
                 * */
-                parseCount --;
                 Log.i("info",parseCount+"번째 파싱이 끝남. (네트워크 확인전), "+updateCount+"개의 정보가 업데이트 되었다. "+a.getYear()+""+a.getMonth());
                 if (a.getErrorCode()==ParseSen.ERR_NET_ERROR) {
                     // 인터넷 연결이 영 이상하단 말이야 or 자료가 없어?
@@ -256,14 +249,17 @@ public class TodayMealActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NETWORK_SUCKS, Toast.LENGTH_LONG);
                     toast.show();
                     drawCalendar();
-                    parseCount = 0;
-                    return;
+//                    parseCount = 0;
+                    finish();
                 }
+                Log.i("info",parseCount+1+"번째 파싱이 끝남. ");
 
-                Log.i("info",parseCount+"번째 파싱이 끝남. ");
+                parseCount ++;
+
 
                 // 마지막 파싱일때 토스트 쏴쏴쏴쏴쐈!
-                if(parseCount == 0){
+                if(parseCount == 3){
+
                     drawCalendar();
                     if(updateCount == 0){
                         if(dbLastday == -1){ // DB도 없고.. 표시해줄게 없는데?
@@ -344,7 +340,7 @@ public class TodayMealActivity extends AppCompatActivity {
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
         calendar.init(calStart.getTime(), calEnd.getTime());
 
-        getMealInfo();
+        getMealInfo(dateBundle[0], dateBundle[1]);
     }
 
     public int[] getDateRange() {
@@ -353,6 +349,7 @@ public class TodayMealActivity extends AppCompatActivity {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
 
+        int startDate=0, endDate=0;
         int focusedDate;
         while (cursor.moveToNext()) {
             focusedDate = cursor.getInt(1);
@@ -380,7 +377,7 @@ public class TodayMealActivity extends AppCompatActivity {
         int[] dateBundle = {startDate, endDate};
         return (dateBundle);
     }
-    private void getMealInfo(){
+    private void getMealInfo(int startDate, int endDate){
         // mealinfo 에 데이터에 저장하고 하이라이트 할거는 하이라이트 한다.
 
         DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
