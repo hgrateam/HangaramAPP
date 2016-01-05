@@ -21,10 +21,11 @@ import java.util.ArrayList;
 
 public class TimeTable extends AppCompatActivity implements TimeTableDialogFragment.TimeTableDialogListener{
 
-    int day, column;
-    TimeTableAdapter ttadapter;
-    ArrayList<cellInfo> cellinfos;
-    DBHelper helper;
+    private int day, column;
+    private TimeTableAdapter ttadapter;
+    private ArrayList<cellInfo> cellinfos;
+    private TimeTableGridView gv;
+    private DBHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        TimeTableGridView gv = (TimeTableGridView) findViewById(R.id.ttgrid);
+        gv = (TimeTableGridView) findViewById(R.id.ttgrid);
         gv.setAdapter(ttadapter);
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -69,38 +70,51 @@ public class TimeTable extends AppCompatActivity implements TimeTableDialogFragm
     public void showTimeTableDialog(int day, int column){
         TimeTableDialogFragment fragment = new TimeTableDialogFragment();
         // 이때까지 저장되어있는 과목명단을 넘겨준다.
-        ArrayList<String> subjects = new ArrayList<String>();
+        Log.i("info", "day : " + day + " column : " + column + "번째 클릭-> Dialog 표시");
 
-        String name="", memo="";
+        int array_pos = -1;
         for(int i=0;i<cellinfos.size();i++){
-            boolean flag = false;
-
             if(cellinfos.get(i).getPosition() == day+column*6){
-                name = cellinfos.get(i).getName();
-                memo = cellinfos.get(i).getMemo();
-            }
-            for(int j=0;j<subjects.size();j++){
-                if(cellinfos.get(i).getName().equals(subjects.get(j))){
-                    flag = true;
-                }
-            }
-
-            if(flag == false){
-                subjects.add(cellinfos.get(i).getName());
+                array_pos = i;
+                break;
             }
         }
+        // 처음 칸에 입력할때
+        if(array_pos == -1){
+            addClass("", day, column, "");
+            fragment.setCellInfo(cellinfos, cellinfos.size()-1);
+            fragment.show(getSupportFragmentManager(), "TimeTable");
+        }
+        else{
+            fragment.setCellInfo(cellinfos,array_pos);
+            fragment.show(getSupportFragmentManager(), "TimeTable");
+        }
+        Log.i("info","array_pos = "+array_pos);
         // ArrayList<String> Subject에 중복없이 이때까지 기록된 과목명들이 저장된다.
-        fragment.setDate(day, column);
-        fragment.setSubjectList(subjects);
-        fragment.setCellInfo(name,memo);
-        fragment.show(getSupportFragmentManager(), "TimeTable");
     }
 
     @Override
-    public void onDialogPositiveClick(String value, String memo) {
-        addClass(value, day, column, memo);
+    public void onDialogPositiveClick(ArrayList<cellInfo> cellinfos, int array_pos, boolean isUpdate) {
+        String value = cellinfos.get(array_pos).getName();
+        String memo = cellinfos.get(array_pos).getMemo();
+        int position = cellinfos.get(array_pos).getPosition();
+
+        Log.i("info", "onDialog , isUpdate = "+isUpdate+ " 내용 : "+value+" | "+memo);
         // Dialog 에서 정보가 입력되었을때 DB를 기록한다.
-        helper.insert("insert into " + DBHelper.TIMETABLE_TABLE_NAME + " (name, pos, memo) values ('" + value + "',  + "+(day+column*6) + ", '"+memo+"');");
+        if(isUpdate == false) {
+            helper.insert("insert into " + DBHelper.TIMETABLE_TABLE_NAME + " (name, pos, memo) values ('" + value + "',  + " + (position) + ", '" + memo + "');");
+        }
+        //update creature_template set creature_template.name = 'Test' where creature_template.entry = 3;
+        else {
+            // 이미 있는 경우에는 DB가 중복되니까..
+            helper.insert("delete from " + DBHelper.TIMETABLE_TABLE_NAME + " where " + DBHelper.TIMETABLE_TABLE_NAME + ".pos = " + (position));
+            helper.insert("insert into " + DBHelper.TIMETABLE_TABLE_NAME + " (name, pos, memo) values ('" + value + "',  + " + (position) + ", '" + memo + "');");
+        }
+
+        ttadapter.notifyDataSetChanged();
+
+        gv.invalidateViews();
+        gv.setAdapter(ttadapter);
         // Todo: 빈칸이면 DB삭제! 아니면 DB삭제할 방법 생각해두기.
     }
     public void addClass(String value, int day, int column, String memo){
@@ -122,7 +136,11 @@ class cellInfo{
     public String getName(){
         return name;
     }
+    public void setName(String name){this.name = name;}
+    public void setMemo(String memo){this.memo = memo;}
     public String getMemo()  {return memo;}
+    public int getDay(){ return day;}
+    public int getColumn(){ return column;}
     private String name;
     private int day;
     private int column;

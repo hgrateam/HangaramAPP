@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
+import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.ArrayList;
 
@@ -27,12 +29,9 @@ public class TimeTableDialogFragment extends DialogFragment {
     String dayName[]={"월","화","수","목","금"};
     AutoCompleteTextView subjectName;
     EditText et_memo;
-    String name, memo;
     String[] subjectlist;
-    int day, column;
     public interface TimeTableDialogListener{
-        //        void onDialogPositiveClick(DialogFragment dialog);
-        void onDialogPositiveClick(String value, String memo);
+        void onDialogPositiveClick(ArrayList<cellInfo> cellinfos, int array_pos,  boolean isUpdate);
     }
     TimeTableDialogListener mListener;
 
@@ -49,22 +48,36 @@ public class TimeTableDialogFragment extends DialogFragment {
     }
     public TimeTableDialogFragment() {
         super();
-        day = column = 1;
     }
-    public void setDate(int day, int column){
-        this.day = day;
-        this.column = column;
-    }
-    public void setSubjectList(ArrayList<String> a){
-        subjectlist = new String[a.size()];
-        for(int i=0;i<a.size();i++){
-            subjectlist[i] = a.get(i);
+    ArrayList<cellInfo> cellinfos;
+    int array_pos;
+    public void setSubjectList(){
+
+        ArrayList<String> subjects = new ArrayList<String>();
+
+        for(int i=0;i<cellinfos.size();i++){
+            boolean flag = false;
+
+            for(int j=0;j<subjects.size();j++){
+                if(cellinfos.get(i).getName().equals(subjects.get(j))){
+                    flag = true;
+                }
+            }
+            if(flag == false){
+                subjects.add(cellinfos.get(i).getName());
+            }
+        }
+
+        subjectlist = new String[subjects.size()];
+        for(int i=0;i<subjects.size();i++){
+            subjectlist[i] = subjects.get(i);
         }
     }
 
-    public void setCellInfo(String name, String memo){
-        this.name = name;
-        this.memo = memo;
+    public void setCellInfo(ArrayList<cellInfo> cellinfos, int array_pos){
+        this.cellinfos = cellinfos;
+        this.array_pos = array_pos;
+        setSubjectList();
     }
 
     @Override
@@ -84,8 +97,8 @@ public class TimeTableDialogFragment extends DialogFragment {
         subjectName = (AutoCompleteTextView) view.findViewById(R.id.tv_tt_name);
         et_memo = (EditText) view.findViewById(R.id.tv_tt_memo);
 
-        subjectName.setText(name);
-        et_memo.setText(memo);
+        subjectName.setText(cellinfos.get(array_pos).getName());
+        et_memo.setText(cellinfos.get(array_pos).getMemo());
         subjectName.setThreshold(0);
         subjectName.setAdapter(adapter);
 
@@ -97,8 +110,23 @@ public class TimeTableDialogFragment extends DialogFragment {
                         // sign in the user ...
                         String value = subjectName.getText().toString();
                         String Memo = et_memo.getText().toString();
-                        mListener.onDialogPositiveClick(value, Memo);
+                        Log.i("info", "확인 버튼 눌림! " + value + " | " + Memo);
 
+                        int day = cellinfos.get(array_pos).getDay();
+                        int column = cellinfos.get(array_pos).getColumn();
+
+                        cellinfos.set(array_pos,new cellInfo(value, day, column, Memo));
+
+/*                        cellinfos.get(array_pos).setMemo(value);
+                        cellinfos.get(array_pos).setMemo(Memo);
+  */
+
+
+                        for(int i=0;i<cellinfos.size();i++){
+                            Log.i("info", i+" | cellinfos log : "+cellinfos.get(i).getName());
+                        }
+
+                        mListener.onDialogPositiveClick(cellinfos, array_pos, (value != "" || Memo !="")?true:false);
                     }
                 })
                 .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -106,7 +134,7 @@ public class TimeTableDialogFragment extends DialogFragment {
                         TimeTableDialogFragment.this.getDialog().cancel();
                     }
                 })
-                .setTitle(dayName[day-1]+"요일 "+column+"교시 과목 설정")
+                .setTitle(dayName[cellinfos.get(array_pos).getDay() - 1] + "요일 " + cellinfos.get(array_pos).getColumn() + "교시 과목 설정")
         ;
 //        return super.onCreateDialog(savedInstanceState);
         return builder.create();
