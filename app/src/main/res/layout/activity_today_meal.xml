@@ -51,14 +51,25 @@
 
     </RelativeLayout>
 
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+    </android.support.v4.view.ViewPager>
+
+
     <!-- A CardView that contains a TextView -->
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        card_view:contentPadding="5dp"
         android:clickable="true"
+        card_view:cardBackgroundColor="@color/colorPrimaryDark"
         android:transitionName="@string/transition_name_today_meal_card"
         android:foreground="?selectableItemBackground"
         card_view:cardCornerRadius="4dp"
@@ -67,16 +78,41 @@
         android:stateListAnimator="@anim/card_elevation">
 
         <TextView
-            android:id="@+id/schedule_today_meal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="7dp"
-            android:layout_gravity="center"
-            android:transitionName="@string/transition_name_today_meal_text"
+            android:text="점심메뉴"
+            android:layout_marginTop="5dp"
+            android:padding="5dp"
+            android:textSize="24sp"
+            android:background="@color/colorAccent"
+            android:textColor="@android:color/white"/>
+
+
+        <TextView
+            android:id="@+id/schedule_today_meal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="45dp"
             android:gravity="center"
+            android:transitionName="@string/transition_name_today_meal_text"
             android:textSize="18sp"
+            android:textColor="@android:color/white"
             android:text="오늘의 급식이 표시되는 공간입니다."/>
 
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="75dp"
+            android:text="알레르기 정보"
+            android:textSize="15sp"
+            android:layout_marginLeft="30dp"
+            android:gravity="center"
+            android:background="@drawable/allergy_info_chip"
+            android:backgroundTint="5dp"/>
+
     </android.support.v7.widget.CardView>
+
+
 
 </RelativeLayout>
