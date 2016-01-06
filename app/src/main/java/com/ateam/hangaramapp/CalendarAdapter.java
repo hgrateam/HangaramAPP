@@ -120,7 +120,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             }
             else
                 holder.scell_dayindi.setVisibility(View.VISIBLE);
-            holder.scell_dayindi.setText(callist.get(position).getDate()%100+"일 ");
+            holder.scell_dayindi.setText(" "+callist.get(position).getDate()%100+" 일 ");
             holder.scell_textview.setText(callist.get(position).getName());
         }
 

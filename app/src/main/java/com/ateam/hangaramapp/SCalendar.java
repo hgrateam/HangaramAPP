@@ -1,6 +1,7 @@
 package com.ateam.hangaramapp;
 
 import android.app.ProgressDialog;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import java.util.GregorianCalendar;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.TableLayout;
@@ -51,6 +53,15 @@ public class SCalendar extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
         progDialog = new ProgressDialog(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_calendar);
+        setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+
+        if(ab!=null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
+
 
         ParseCal parsecal = new ParseCal();
         parsecal.setCallBackListener(new ParseCal.ParseCallBack() {
