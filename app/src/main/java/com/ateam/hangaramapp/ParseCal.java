@@ -77,6 +77,8 @@ public class ParseCal {
                     rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
                     while ((line = rd.readLine()) != null) {
+                        Log.i("parseCal",line);
+
                         if(depth==1){
                             if(line.contains("DTSTART;VALUE=DATE:")){
                                 strdStart = line.substring(line.indexOf(":")+1,line.length());
@@ -102,7 +104,11 @@ public class ParseCal {
 
                                 if(intdstart/100 != lastdate/100){
                                     // mheader 추가
-                                    callist.add(new Calendar_cellInfo(intdstart/10000, intdstart%10000/100,0));
+                                    if(callist.size()!=0) {
+                                        callist.set(lastheader, new Calendar_cellInfo(lastdate / 10000, lastdate % 10000 / 100, cnt));
+                                    }
+                                    lastheader = callist.size();
+                                    callist.add(new Calendar_cellInfo(intdstart / 10000, intdstart % 10000 / 100, 0));
                                     cnt=0;
                                 }
                                 callist.add(new Calendar_cellInfo(strItem,intdstart));
@@ -113,6 +119,15 @@ public class ParseCal {
                         }
                     }
                     rd.close();
+
+                    if(callist.size()!=0) {
+                        callist.set(lastheader, new Calendar_cellInfo(lastdate / 10000, lastdate % 10000 / 100, cnt));
+                    }
+                    if(cnt!=0) {
+                        if(intToYear(intdstart)==year || intToYear(intdstart)==year-1 || intToYear(intdstart)==year+1) {
+                            callist.add(new Calendar_cellInfo(intdstart / 10000, intdstart % 10000 / 100, 0));
+                        }
+                    }
 
                     handler.sendMessage(handler.obtainMessage());
 

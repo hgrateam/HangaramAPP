@@ -11,8 +11,8 @@
         android:orientation="horizontal"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

@@ -23,6 +23,7 @@ class Calendar_cellInfo{
     Calendar_cellInfo(int year, int month, int cnt){
         this.year = year;
         this.month = month;
+        this.day = 99;
         this.cnt = cnt;
         type = 1;
         Log.i("info","짜잔 헤더!"+year+month);
@@ -107,13 +108,19 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             int date = callist.get(position).getDate();
             int year = date/10000;
             int month = (date%10000)/100;
+            int day = date%100;
             int cnt = callist.get(position).getCnt();
             holder.mheader_mindi.setText(year+"년 "+month+"월");
             holder.mheader_cntindi.setText(cnt+"개의 일정이 있습니다.");
         }
         else{
-            Log.i("info",callist.get(position).getDate()%100+"일");
-            holder.scell_dayindi.setText(callist.get(position).getDate()%100+"일");
+            Log.i("info", callist.get(position).getDate() % 100 + "일");
+            if(callist.get(position).getDate() == callist.get(position+1).getDate() && callist.get(position+1).getType()==2){
+                holder.scell_dayindi.setVisibility(View.INVISIBLE);
+            }
+            else
+                holder.scell_dayindi.setVisibility(View.VISIBLE);
+            holder.scell_dayindi.setText(callist.get(position).getDate()%100+"일 ");
             holder.scell_textview.setText(callist.get(position).getName());
         }
 
