@@ -3,6 +3,8 @@ package com.ateam.hangaramapp;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -23,7 +25,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -110,27 +115,49 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        MealInfo mealinfo = new MealInfo(this);
-        Date today = new Date();
+        drawTodayMealCard();
 
-        mealinfo.setTemplate("<오늘의 급식>\n"+(today.getYear()+1900)+"년 "+(today.getMonth()+1)+"월 "+ today.getDate()+"일\n\n [중식]\n!lunch!\n\n[저녁]\n!dinner!");
-        mealinfo.acesssDB();
+    }
+    // 그래서 다음 소스대로 하면 된다.
+
+    public void drawTodayMealCard(){
 
         TextView today_meal = (TextView) findViewById(R.id.text_today_meal);
 
-        if(mealinfo.isMealExist(dateToInt(today))){
-            today_meal.setTextSize(15);
-            today_meal.setText(mealinfo.removeAllergie(mealinfo.getData(dateToInt(today))));
+        Date today = new Date();
+
+
+        ArrayList<mealData> mealDatas = new ArrayList<>();
+
+        DBHelper helper = new DBHelper(MainActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
+
+        while (cursor.moveToNext()) {
+            int date = cursor.getInt(1);
+            mealDatas.add(new mealData(date, cursor.getString(2), cursor.getString(3)));
         }
-        else{
-            today_meal.setTextSize(18);
-            today_meal.setText("오늘의 급식");
+        db.close();
+
+
+
+
+        GregorianCalendar gcalendar = new GregorianCalendar();
+        int t_year=gcalendar.get(Calendar.YEAR); // index 1
+        int t_month=gcalendar.get(Calendar.MONTH)+1; // index 1
+        int t_day=gcalendar.get(Calendar. DAY_OF_MONTH); // index 1
+
+        for(int i=0;i<mealDatas.size();i++){
+            if(mealDatas.get(i).getDate() == t_year*10000+t_month*100+t_day){
+                today_meal.setTextSize(15);
+                today_meal.setText("<"+t_year+"년 "+t_month+"월 "+t_day+"일>\n"+mealDatas.get(i).getMealData());
+                return;
+            }
         }
+
+        today_meal.setTextSize(18);
+        today_meal.setText("오늘의 급식");
     }
-
-
-    // 그래서 다음 소스대로 하면 된다.
-
 
     @Override
     public void onBackPressed() {

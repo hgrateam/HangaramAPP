@@ -1,6 +1,7 @@
 package com.ateam.hangaramapp;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -31,7 +32,7 @@ public class TodayMealActivity extends AppCompatActivity {
     private ProgressDialog progDialog;
     private CalendarPickerView calendar;
     private TextView schedule;
-    private MealInfo mealinfo;
+    Context context;
 
     private int t_year,t_month,t_day;
 
@@ -49,6 +50,15 @@ public class TodayMealActivity extends AppCompatActivity {
     // 1월 급식 있고 2월 급식 없고 3월 급식있고 지금 2월 중순이면 어떻게 될까요오?
 
 
+    public TodayMealActivity(Context context){
+        this.context = context;
+    }
+    public TodayMealActivity(){
+
+    }
+    public Context getContext(){
+        return context;
+    }
     boolean isOnRange(int date){
         int y=intToYear(date);
         int m=intToMonth(date);
@@ -115,7 +125,7 @@ public class TodayMealActivity extends AppCompatActivity {
 
             Log.i("info", "startDate = " + startDate + " 입니다. \n endDate = " + endDate + " 입니다.");
 
-            DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
+            DBHelper helper = new DBHelper(getContext(), DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
 
@@ -155,6 +165,7 @@ public class TodayMealActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = TodayMealActivity.this;
         setContentView(R.layout.activity_today_meal);
 
         Button button1 = (Button) findViewById(R.id.today_meal_button1);
@@ -163,8 +174,6 @@ public class TodayMealActivity extends AppCompatActivity {
 
         schedule = (TextView) findViewById(R.id.schedule_today_meal);
         calendar = (CalendarPickerView) findViewById(R.id.calendar_view);
-
-        mealinfo = new MealInfo(this);
 
         progDialog = new ProgressDialog(this);
 
@@ -179,7 +188,7 @@ public class TodayMealActivity extends AppCompatActivity {
         t_month=gcalendar.get(Calendar.MONTH)+1; // index 1
         t_day=gcalendar.get(Calendar. DAY_OF_MONTH); // index 1
 
-        drawCalendar();
+        drawNullCalendar();
         Log.i("info", "오늘의 날짜 : " + t_year + "/" + t_month + "/" + t_day);
 
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
@@ -187,7 +196,7 @@ public class TodayMealActivity extends AppCompatActivity {
             @Override
             public void onDateSelected(Date date) {
                 // public void setText(date)참조;
-                setCellInfo(date);
+                setCellInfo(date, mealDatas);
             }
 
             @Override
@@ -234,7 +243,7 @@ public class TodayMealActivity extends AppCompatActivity {
             public void OnFinish(ParseSen a) {
                 Log.i("info", "여기까지는 왔니?");
 
-                DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TIMETABLE_TABLE);
+                DBHelper helper = new DBHelper(getContext(), DBHelper.DB_FILE_NAME, null, 1, DBHelper.TIMETABLE_TABLE);
                 SQLiteDatabase db = helper.getReadableDatabase();
 
                 Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
@@ -270,10 +279,10 @@ public class TodayMealActivity extends AppCompatActivity {
                         if (a.getErrorCode() == ParseSen.ERR_NET_ERROR) {
                             // 인터넷 연결이 영 이상하단 말이야 or 자료가 없어?
                             Log.i("info", "인터넷 확인좀...?");
-                            Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NETWORK_SUCKS, Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(getContext(), MSG_NETWORK_SUCKS, Toast.LENGTH_LONG);
                             toast.show();
                         } else {
-                            Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NO_SHOW, Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(getContext(), MSG_NO_SHOW, Toast.LENGTH_LONG);
                             toast.show();
 
                         }
@@ -282,19 +291,50 @@ public class TodayMealActivity extends AppCompatActivity {
                     } else {
                         //  파싱해 올건 없는데 기존 데이터는 있네?
                         Log.i("info", "이미 정보가 있다! 파싱해올 정보가 없다.");
-                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_ALREADY_EXISTS, Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getContext(), MSG_ALREADY_EXISTS, Toast.LENGTH_LONG);
                         toast.show();
                     }
                 }
                 // 업데이트 할게 없는데?
                 else {
-                    Toast toast = Toast.makeText(TodayMealActivity.this, MSG_UPDATE, Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(getContext(), MSG_UPDATE, Toast.LENGTH_LONG);
                     toast.show();
                 }
             }
         });
 
         ps.parse(mealDatas, month, year);
+    }
+    private void drawNullCalendar(){
+        // 달력에 그릴 범위를 계산해온다.
+        Log.i("info", "그린다 달력!");
+
+        int startYear, startMonth, startDay;
+        int endYear, endMonth, endDay;
+
+        DBdate dbdate = new DBdate();
+
+        dbdate.analyze();
+        //급식 캘린더의 시작 날짜를
+        // 초기화한다.
+        startYear = intToYear(dbdate.getStartDate());
+        startMonth = intToMonth(dbdate.getStartDate());
+        startDay = intToDay(dbdate.getStartDate());
+
+        Calendar calStart = Calendar.getInstance();
+        calStart.set(startYear, --startMonth, startDay);
+
+        //급식 캘린더의 끝 날짜를 초기화한다.
+
+        endYear = intToYear(dbdate.getEndDate());
+        endMonth = intToMonth(dbdate.getEndDate());
+        endDay = intToDay(dbdate.getEndDate());
+
+        Calendar calEnd = Calendar.getInstance();
+        calEnd.set(endYear, --endMonth, ++endDay);
+
+        //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
+        calendar.init(calStart.getTime(), calEnd.getTime());
     }
 
     private void drawCalendar(){
@@ -328,78 +368,88 @@ public class TodayMealActivity extends AppCompatActivity {
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
         calendar.init(calStart.getTime(), calEnd.getTime());
 
-        getMealInfo(dbdate.getStartDate(), dbdate.getEndDate());
+        getMealInfo(dbdate.getStartDate(), dbdate.getEndDate(), mealDatas);
 
         try {
             calendar.selectDate(new Date());
         }catch (IllegalArgumentException exception){
         }
         calendar.scrollToDate(new Date());
-        setCellInfo(new Date());
-
+        setCellInfo(new Date(), mealDatas);
     }
 
-    private void getMealInfo(int startDate, int endDate){
+    public void getMealInfo(int startDate, int endDate, ArrayList<mealData> mealDatas){
         // mealinfo 에 데이터에 저장하고 하이라이트 할거는 하이라이트 한다.
 
-        DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
-        Date today = new Date();
+        boolean flag=false;
         Collection<Date> highdates = new ArrayList<Date>(200); // 하이라이트 할 날짜 목록
+
+        if(startDate ==0 && endDate == 0){
+            Log.i("info", "메인 엑티비티에서 손님이 오셨네!");
+            flag = true;
+        }
+        else{
+            calendar.clearHighlightedDates();
+        }
         int date;
+
+
+        DBHelper helper = new DBHelper(getContext(), DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
+        Date today = new Date();
 
         SQLiteDatabase db = helper.getReadableDatabase();
 
         Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
 
-        Log.i("info", "getMealInfo - reset other data");
-        mealinfo.resetMeal();
-        calendar.clearHighlightedDates();
+        mealDatas.clear();
+
 
         while (cursor.moveToNext()) {
             date = cursor.getInt(1);
-            if(startDate <= date && date <= endDate) {
-                mealinfo.setTemplate(intToYear(date)+"년 "+intToMonth(date)+"월 "+ intToDay(date)+"일\n [중식]\n!lunch!\n\n[저녁]\n!dinner!");
-                mealinfo.add(cursor.getInt(1), cursor.getString(2), cursor.getString(3));
+            if((startDate <= date && date <= endDate) || flag == false) {
+//                mealinfo.setTemplate(intToYear(date)+"년 "+intToMonth(date)+"월 "+ intToDay(date)+"일\n [중식]\n!lunch!\n\n[저녁]\n!dinner!");
 
-                Date date2 = new Date();
-                date2.setYear(intToYear(date) - 1900);
-                date2.setMonth(intToMonth(date) - 1);
-                date2.setDate(intToDay(date));
+                Log.i("info", "호잇호잇"+date+" | "+cursor.getString(2));
+                mealDatas.add(new mealData(date, cursor.getString(2), cursor.getString(3)));
 
-                if(dateToInt(today)!=date) {
-                    highdates.add(date2); // 오늘은 하이라이트 노노해
-                    Log.i("info", "highlight : " + dateToInt(date2));
+                if(flag == false) {
+                    Date date2 = new Date();
+                    date2.setYear(intToYear(date) - 1900);
+                    date2.setMonth(intToMonth(date) - 1);
+                    date2.setDate(intToDay(date));
+
+                    if (dateToInt(today) != date) {
+                        highdates.add(date2); // 오늘은 하이라이트 노노해
+                        Log.i("info", "highlight : " + dateToInt(date2));
+                    }
                 }
             }
         }
 
 
-        calendar.highlightDates(highdates);
+        if(flag == false) {
+            calendar.highlightDates(highdates);
+        }
         // 오늘 날짜를 선택한다.
         helper.close();
 
     }
 
-    private void setCellInfo(Date date){
-        String str = mealinfo.getData(dateToInt(date));
+    private void setCellInfo(Date date, ArrayList<mealData> mealdatas){
         Log.i("info", dateToInt(date) + " 날짜가 선택되었당.");
-        if(mealinfo.isMealExist(dateToInt(date))){
-            Log.i("info", "선택된 날짜의 정보 : "+str);
 
-            // 알레르기 정보를 표기 할것인가?
-            // 이건 프리퍼런스에서 변수를 설정한다음에 그 후에 처리하기
-            if(false){
+        for(int i=0;i<mealdatas.size();i++){
+            if(mealdatas.get(i).getDate() == dateToInt(date)){
+                String str = mealdatas.get(i).getMealData();
+                Log.i("info", "선택된 날짜의 정보 : "+str);
+
+                // 알레르기 정보를 표기 할것인가?
+                // 이건 프리퍼런스에서 변수를 설정한다음에 그 후에 처리하기
                 schedule.setText(str);
-            }
-            else {
-                //①난류 ②우유 ③메밀 ④땅콩 ⑤대두 ⑥밀 ⑦고등어 ⑧게 ⑨새우 ⑩돼지고기 ⑪복숭아 ⑫토마토 ⑬아황산염
-                schedule.setText(mealinfo.removeAllergie(str));
+                return;
             }
         }
-        else{
-            schedule.setText(MSG_NO_MEAL);
-        }
-
+        schedule.setText(MSG_NO_MEAL);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
