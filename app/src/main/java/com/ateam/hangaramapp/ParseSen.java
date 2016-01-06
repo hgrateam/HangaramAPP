@@ -26,43 +26,17 @@ public class ParseSen {
         mcallback = callback;
     }
 
-    String menu_l[];
-    String menu_d[];
-    boolean check[];
-
     static final String PARSE_ERROR = "정보가 존재하지 않습니다.";
-    static final int TIME_LUNCH = 1;
-    static final int TIME_DINNER = 2;
 
     public final static int ERR_NO_ERROR = 3;
     public final static int ERR_NET_ERROR = 4;
 
-    private boolean isFirst;
     int error_code;
-    int mm, ay;
-    int lastday;
 
     ParseSen() {
-        check = new boolean[33];
-        menu_d = new String[1000];
-        menu_l = new String[1000];
-        isFirst = false;
-        for(int i=0;i<=31;i++) {
-            check[i] = false;
-            menu_d[i]=menu_l[i]="";
-        }
-        lastday = -1;
     }
 
-    public void setIsFirst(boolean a){  isFirst = a;    };
-    public boolean getIsFirst(){ return isFirst;}
     public int getErrorCode(){ return error_code;}
-    public boolean isMenuExist(int d){
-        return check[d];
-    }
-    public int getLastday(){
-        return lastday;
-    }
     public void parse_part(int m, int y, int calc, ArrayList<mealData> mealDatas){
         Log.i("info", "parse_part"+m+""+y);
         if(calc == -1){
@@ -158,33 +132,27 @@ public class ParseSen {
 
     }
     final Handler handler = new Handler()
-
     {
         @Override
         public void handleMessage(Message msg) {
             mcallback.OnFinish(ParseSen.this);
         }
 
-
     };
-    public void parse(final ArrayList<mealData> mealDatas){
+    public void parse(final ArrayList<mealData> mealDatas, final int mm, final int ay){
         Thread myThread = new Thread(new Runnable() {
             public void run() {
                 parse_part(mm, ay, -1, mealDatas);
+                Log.i("info", "발싸! 1");
                 parse_part(mm, ay, 0, mealDatas);
+                Log.i("info", "발싸! 2");
                 parse_part(mm, ay, 1, mealDatas);
+                Log.i("info","발싸! 3");
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
                 return;
             }
         });
         myThread.start();
-    }
-    void setDate(int m, int y){ mm=m; ay=y;}
-    int getMonth(){
-        return mm;
-    }
-    int getYear(){
-        return ay;
     }
 }

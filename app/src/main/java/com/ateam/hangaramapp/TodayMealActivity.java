@@ -33,13 +33,10 @@ public class TodayMealActivity extends AppCompatActivity {
     private TextView schedule;
     private MealInfo mealinfo;
 
-    private boolean dbCheck[];
     private int t_year,t_month,t_day;
 
-    private int updateCount;
-
     ArrayList<mealData> mealDatas;
-    private final String MSG_PARSE_ERROR = "무엇인가 잘못되었다. 콜미";
+    //    private final String MSG_PARSE_ERROR = "무엇인가 잘못되었다. 콜미";
     private final String MSG_NETWORK_SUCKS = "네트워크 상태가 올바르지 않습니다.";
     private final String MSG_FIRST_NETWORK_SUCKS = "네트워크 상태가 올바르지 않습니다. 처음 접근은 네트워크가 필요합니다.";
     private final String MSG_ALREADY_EXISTS = "더 이상 갱신할 정보가 없습니다.";
@@ -47,10 +44,14 @@ public class TodayMealActivity extends AppCompatActivity {
     private final String MSG_NO_MEAL="해당 날짜의 급식 정보가 없습니다.";
     private final String MSG_NO_SHOW="보여줄 급식정보가 없습니다.";
 
-    boolean isOnRage(int date){
+    //Todo DB에서 날짜 부르는 범위 정하기(-1 0 +1),
+    // 예외 또 있음!
+    // 1월 급식 있고 2월 급식 없고 3월 급식있고 지금 2월 중순이면 어떻게 될까요오?
+
+
+    boolean isOnRange(int date){
         int y=intToYear(date);
         int m=intToMonth(date);
-        int d=intToDay(date);
         if(m==1){
             if(y==t_year-1 && m == 12){
                 return true;
@@ -93,6 +94,64 @@ public class TodayMealActivity extends AppCompatActivity {
         return ymdToInt(date.getYear()+1900,date.getMonth()+1, date.getDate());
     }
 
+    class DBdate{
+        int startDate;
+        int endDate;
+        boolean check;
+        DBdate(int startDate, int endDate, boolean check){
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.check = check;
+
+        }
+        DBdate(){
+            this.startDate = 0;
+            this.endDate = 0;
+            this.check = false;
+        }
+        public void analyze(){
+            check = false;
+            startDate = endDate = 0;
+
+            Log.i("info", "startDate = " + startDate + " 입니다. \n endDate = " + endDate + " 입니다.");
+
+            DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
+            SQLiteDatabase db = helper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
+
+            int focusedDate;
+            while (cursor.moveToNext()) {
+                focusedDate = cursor.getInt(1);
+                if (startDate == 0) {
+                    startDate = focusedDate; //시작날짜에 포커스값 대입
+                } else if (endDate == 0) {
+                    endDate = focusedDate; //끝날짜에 포커스값 대입
+                } else {
+                    if (focusedDate < startDate) {
+                        startDate = focusedDate; //시작날짜를 더 이전날짜가 존재하면 변경
+                    }
+                    if (focusedDate > endDate) {
+                        endDate = focusedDate; //끝날짜를 더 나중날짜가 존재하면 변경
+                    }
+                }
+            }
+            helper.close();
+
+            if(startDate == 0){
+                // 처음이시군여!
+                check = true;
+                startDate = ymdToInt(t_year,t_month,1);
+            }
+
+            if(endDate < ymdToInt(t_year,t_month,t_day)){{
+                endDate = ymdToInt(t_year,t_month,27);
+            }}
+        }
+        public int getStartDate(){ return startDate;}
+        public int getEndDate(){ return endDate;}
+        public boolean isNoData(){ return check;}
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,8 +166,6 @@ public class TodayMealActivity extends AppCompatActivity {
 
         mealinfo = new MealInfo(this);
 
-        dbCheck = new boolean[33];
-
         progDialog = new ProgressDialog(this);
 
         // Get a support ActionBar corresponding to this toolbar
@@ -122,6 +179,7 @@ public class TodayMealActivity extends AppCompatActivity {
         t_month=gcalendar.get(Calendar.MONTH)+1; // index 1
         t_day=gcalendar.get(Calendar. DAY_OF_MONTH); // index 1
 
+        drawCalendar();
         Log.i("info", "오늘의 날짜 : " + t_year + "/" + t_month + "/" + t_day);
 
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
@@ -138,26 +196,25 @@ public class TodayMealActivity extends AppCompatActivity {
             }
         });
 
-        drawNullCalendar();
+        mealDatas = new ArrayList<>();
 
-        mealDatas = new ArrayList<>(200);
+        DBdate dbdate = new DBdate();
+        dbdate.analyze();
 
-        int[] dateBundle = getDateRange();
-
-        if(dateBundle[0] == 0) { // 기존 정보가 하나도 없어! -> 정보를 못받아올때는 그릴게 없으니까 그냥 엑티비티를 나갈거임!
+        if(dbdate.isNoData()) { // 기존 정보가 하나도 없어! -> 정보를 못받아올때는 그릴게 없으니까 그냥 엑티비티를 나갈거임!
             Log.i("info", "기존 정보가 하나도 없군");
-            gotoParse(t_year, t_month,  true, mealDatas);
+            gotoParse(t_year, t_month, mealDatas);
         }
-        else if(dateBundle[1] < ymdToInt(t_year, t_month, t_day)){ // 오늘자 정보가 없어! -> 파싱
+        else if(dbdate.getEndDate() == ymdToInt(t_year, t_month, 27)){ // 제일 마지막으로 저장된 급식 날짜가 오늘보다 뒤임!
             Log.i("info", "오늘자 정보가 없군!");
-            gotoParse(t_year, t_month, false, mealDatas);
+            gotoParse(t_year, t_month, mealDatas);
         }
         else{
             drawCalendar();
         }
 
     }
-    public void gotoParse(int y, int m,  boolean isFirst, final ArrayList<mealData> mealDatas){
+    public void gotoParse(int y, int m, final ArrayList<mealData> mealDatas){
 
         // boolean isFirst 의 역활 :
         int year, month;
@@ -175,79 +232,51 @@ public class TodayMealActivity extends AppCompatActivity {
         ps.setCallBackListener(new ParseSen.ParseCallBack() {
             @Override
             public void OnFinish(ParseSen a) {
+                Log.i("info", "여기까지는 왔니?");
 
                 DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TIMETABLE_TABLE);
                 SQLiteDatabase db = helper.getReadableDatabase();
-                int dbLastday = -1;
 
                 Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
-                int date;
+                int date = -1;
                 while (cursor.moveToNext()) {
                     date = cursor.getInt(1);
-                    if (cursor.getInt(1) > dbLastday) {
-                        dbLastday = date;
-                    }
-                    for(int i=0;i<mealDatas.size();i++){
-                        if(mealDatas.get(i).getDate() == date){
-                            mealDatas.set(i, new mealData(mealDatas.get(i),true));
-                            break;
+                    for (int i = 0; i < mealDatas.size(); i++) {
+                        if (mealDatas.get(i).getDate() == date) {
+                            mealDatas.remove(i);
                         }
                     }
                 }
                 helper.close();
 
-                Log.i("info", "ParseSen 에서 긁어온 정보 수 = "+mealDatas.size());
-                if (mealDatas.size()!=0) {
-                    for(int i=0;i<mealDatas.size();i++){
-                        if(mealDatas.get(i).getCheck()==false) {
+                Log.i("info", "ParseSen 에서 긁어온 '유효한' 정보 수 = " + mealDatas.size());
+                if (mealDatas.size() != 0) {
+                    for (int i = 0; i < mealDatas.size(); i++) {
+                        date = mealDatas.get(i).getDate();
+                        Log.i("info", "insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + mealDatas.get(i).getLunch() + "', '" + mealDatas.get(i).getDinner() + "');");
+                        helper.insert("insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + mealDatas.get(i).getLunch() + "', '" + mealDatas.get(i).getDinner() + "');");
 
-                            date = mealDatas.get(i).getDate();
-                            Log.i("info", "insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + mealDatas.get(i).getLunch() + "', '" + mealDatas.get(i).getDinner() + "');");
-                            helper.insert("insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + mealDatas.get(i).getLunch() + "', '" + mealDatas.get(i).getDinner() + "');");
-
-                            // 새로운 DB추가! 적어도 하나는 DB에 추가했구나
-                            updateCount++;
-                        }
+                        // 새로운 DB추가! 적어도 하나는 DB에 추가했구나
                     }
                 }
 
                 progDialog.dismiss();
 
-                /*
-                (ParseSen 에서 파싱 해온거는 아직 DB에 저장은 안 한 상태임)
-                *   a.getLastDay() == -1 : 파싱을 하긴했는데 말이야 아무것도 없더라구
-                *   noupdateFlag==true : 기존에 있던 DB를 다 뒤져봤는데 새로 업데이트 할게 없더라구. 기존에 DB가 있었는지 없었는지는 몰라.
-                *   a.getisFirst() == true : 기존에 DB가 없어! 이미 아무것도 없던데?!
-                *   dbLastday == -1 : db에 아무것도 없음 ㅋ
-                *
-                * */
-                if (a.getErrorCode() == ParseSen.ERR_NET_ERROR) {
-                    // 인터넷 연결이 영 이상하단 말이야 or 자료가 없어?
-                    Log.i("info", "인터넷 확인좀...?");
-
-                    if (a.getIsFirst()) {
-                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_FIRST_NETWORK_SUCKS, Toast.LENGTH_LONG);
-                        toast.show();
-                        finish();
-                    }
-
-                    Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NETWORK_SUCKS, Toast.LENGTH_LONG);
-                    toast.show();
-                    drawCalendar();
-                    finish();
-                }
-
-
-                // 마지막 파싱일때 토스트 쏴쏴쏴쏴쐈!
-
                 drawCalendar();
-                if (updateCount == 0) {
-                    if (dbLastday == -1) { // DB도 없고.. 표시해줄게 없는데?
+                if (mealDatas.size() == 0) { // 추가할게 음서?
 
-                        Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NO_SHOW, Toast.LENGTH_LONG);
-                        toast.show();
+                    if (date == -1) { // DB도 없고.. 표시해줄게 없는데?
 
-                        drawNullCalendar();
+                        if (a.getErrorCode() == ParseSen.ERR_NET_ERROR) {
+                            // 인터넷 연결이 영 이상하단 말이야 or 자료가 없어?
+                            Log.i("info", "인터넷 확인좀...?");
+                            Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NETWORK_SUCKS, Toast.LENGTH_LONG);
+                            toast.show();
+                        } else {
+                            Toast toast = Toast.makeText(TodayMealActivity.this, MSG_NO_SHOW, Toast.LENGTH_LONG);
+                            toast.show();
+
+                        }
 
                         return;
                     } else {
@@ -265,26 +294,9 @@ public class TodayMealActivity extends AppCompatActivity {
             }
         });
 
-        ps.setDate(month, year);
-        ps.setIsFirst(isFirst);
-        ps.parse(mealDatas);
+        ps.parse(mealDatas, month, year);
     }
 
-    private void drawNullCalendar(){
-        // 달력에 그릴 범위를 계산해온다.
-        //급식 캘린더의 시작 날짜를 초기화한다.
-
-        Calendar calStart = Calendar.getInstance();
-        calStart.set(t_year-2, t_month-1, 1);
-
-        Calendar calEnd = Calendar.getInstance();
-        calEnd.set(t_year+2, t_month - 1, 27);
-
-        //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
-        calendar.init(calStart.getTime(), calEnd.getTime());
-
-
-    }
     private void drawCalendar(){
         // 달력에 그릴 범위를 계산해온다.
         Log.i("info", "그린다 달력!");
@@ -292,22 +304,23 @@ public class TodayMealActivity extends AppCompatActivity {
         int startYear, startMonth, startDay;
         int endYear, endMonth, endDay;
 
-        int[] dateBundle = getDateRange();
+        DBdate dbdate = new DBdate();
 
+        dbdate.analyze();
         //급식 캘린더의 시작 날짜를
         // 초기화한다.
-        startYear = intToYear(dateBundle[0]);
-        startMonth = intToMonth(dateBundle[0]);
-        startDay = intToDay(dateBundle[0]);
+        startYear = intToYear(dbdate.getStartDate());
+        startMonth = intToMonth(dbdate.getStartDate());
+        startDay = intToDay(dbdate.getStartDate());
 
         Calendar calStart = Calendar.getInstance();
         calStart.set(startYear, --startMonth, startDay);
 
         //급식 캘린더의 끝 날짜를 초기화한다.
 
-        endYear = intToYear(dateBundle[1]);
-        endMonth = intToMonth(dateBundle[1]);
-        endDay = intToDay(dateBundle[1]);
+        endYear = intToYear(dbdate.getEndDate());
+        endMonth = intToMonth(dbdate.getEndDate());
+        endDay = intToDay(dbdate.getEndDate());
 
         Calendar calEnd = Calendar.getInstance();
         calEnd.set(endYear, --endMonth, ++endDay);
@@ -315,7 +328,7 @@ public class TodayMealActivity extends AppCompatActivity {
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
         calendar.init(calStart.getTime(), calEnd.getTime());
 
-        getMealInfo(dateBundle[0], dateBundle[1]);
+        getMealInfo(dbdate.getStartDate(), dbdate.getEndDate());
 
         try {
             calendar.selectDate(new Date());
@@ -326,40 +339,6 @@ public class TodayMealActivity extends AppCompatActivity {
 
     }
 
-    public int[] getDateRange() {
-
-        DBHelper helper = new DBHelper(TodayMealActivity.this, DBHelper.DB_FILE_NAME, null, 1, DBHelper.TODAYMEAL_TABLE);
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + DBHelper.TODAYMEAL_TABLE_NAME, null);
-
-        int startDate=0, endDate=0;
-        int focusedDate;
-        while (cursor.moveToNext()) {
-            focusedDate = cursor.getInt(1);
-            if (startDate == 0) {
-                startDate = focusedDate; //시작날짜에 포커스값 대입
-            } else if (endDate == 0) {
-                endDate = focusedDate; //끝날짜에 포커스값 대입
-            } else {
-                if (focusedDate < startDate) {
-                    startDate = focusedDate; //시작날짜를 더 이전날짜가 존재하면 변경
-                }
-                if (focusedDate > endDate) {
-                    endDate = focusedDate; //끝날짜를 더 나중날짜가 존재하면 변경
-                }
-            }
-        }
-        helper.close();
-
-        Log.i("info", "startDate = " + startDate + " 입니다. \n endDate = " + endDate + " 입니다.");
-
-        if(endDate < ymdToInt(t_year,t_month,t_day)){{
-            endDate = ymdToInt(t_year,t_month,t_day);
-        }}
-
-        int[] dateBundle = {startDate, endDate};
-        return (dateBundle);
-    }
     private void getMealInfo(int startDate, int endDate){
         // mealinfo 에 데이터에 저장하고 하이라이트 할거는 하이라이트 한다.
 
