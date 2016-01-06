@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:padding="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00abe6"
+            android:textColor="#ffffff"
+            android:text="5일"
+            android:textSize="15dp"
+            android:id="@+id/scell_dayindi"
+            android:layout_gravity="left" />
+
+        <TextView
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="룰루랄라 룰루랄라 으쓱으\nasasadsadsa\nassad쓱"
+            android:textSize="15dp"
+            android:id="@+id/scell_textview"
+            android:layout_gravity="center" />
+
+
+    </LinearLayout>
+</LinearLayout>

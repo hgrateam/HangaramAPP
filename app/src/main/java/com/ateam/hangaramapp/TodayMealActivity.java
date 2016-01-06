@@ -198,7 +198,6 @@ public class TodayMealActivity extends AppCompatActivity {
                 // public void setText(date)참조;
                 setCellInfo(date, mealDatas);
             }
-
             @Override
             public void onDateUnselected(Date date) {
 
@@ -206,7 +205,6 @@ public class TodayMealActivity extends AppCompatActivity {
         });
 
         mealDatas = new ArrayList<>();
-
         DBdate dbdate = new DBdate();
         dbdate.analyze();
 

@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by Suhyun on 2015-12-11.
@@ -23,19 +24,14 @@ public class ParseCal {
         mcallback = callback;
     }
 
-    boolean check[];
-
     final String PARSE_ERROR = "정보가 존재하지 않습니다.";
     final int HEAD_OPEN = 1;
     final int HEAD_CLOSE = 2;
 
     private int year, month;
 
+
     ParseCal() {
-        check = new boolean[31];
-        for(int i=0;i<31;i++) {
-            check[i] = false;
-        }
     }
 
     Handler handler = new Handler() {
@@ -54,25 +50,9 @@ public class ParseCal {
     public int intToDay(int a){
         return a%100;
     }
-    public boolean isMenuExist(int d){
-        return check[d];
-    }
-    public String getItem(int d){
-        if(isMenuExist(d)) {
-            // 원하는 꼴로 수정하셈 (menu_l[날짜] = 점심 메뉴 menu_d[날짜] = 저녁메뉴
-            return "hello";
-        }
-        else return PARSE_ERROR;
-    }
-    public void parse(){
+    public void parse(final ArrayList<Calendar_cellInfo> callist){
         Thread myThread = new Thread(new Runnable() {
             public void run() {
-/*                String urlToRead="https://calendar.google.com/calendar/htmlembed?src=hangaramhs@gmail.com&dates=";
-                //
-                                // + 20151101/20151201
-                urlToRead+=""+ay+((mm<10) ? "0"+mm:mm)+"01/";
-                urlToRead+=(mm==12 ? ""+(ay+1)+"0101":""+ay+((mm<10) ? "0"+mm:mm)+"01");
-                */
                 String urlToRead="https://calendar.google.com/calendar/ical/hangaramhs@gmail.com/public/basic.ics";
 
                 int time = 0;
@@ -87,12 +67,15 @@ public class ParseCal {
                 String strItem=PARSE_ERROR;
                 int intdstart=-1, intdend=-1;
                 int depth = 0;
-
+                int lastheader=0;
+                int lastdate = 0;
+                int cnt=0;
                 try {
                     url = new URL(urlToRead);
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("GET");
                     rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
                     while ((line = rd.readLine()) != null) {
                         if(depth==1){
                             if(line.contains("DTSTART;VALUE=DATE:")){
@@ -115,7 +98,16 @@ public class ParseCal {
                         else if(line.contains("END:VEVENT")) {
                             if(intToYear(intdstart)==year || intToYear(intdstart)==year-1 || intToYear(intdstart)==year+1) {
                                 strItem = strItem.replace("\\", "");
-                                Log.i("info", "dstart : " + intdstart + "|dend = " + intdend + " |item = " + strItem);
+//                                Log.i("info", "dstart : " + intdstart + "|dend = " + intdend + " |item = " + strItem+ "| "+callist.size()+"번쨰");
+
+                                if(intdstart/100 != lastdate/100){
+                                    // mheader 추가
+                                    callist.add(new Calendar_cellInfo(intdstart/10000, intdstart%10000/100,0));
+                                    cnt=0;
+                                }
+                                callist.add(new Calendar_cellInfo(strItem,intdstart));
+                                lastdate = intdstart;
+                                cnt++;
 
                             }   depth--;
                         }
