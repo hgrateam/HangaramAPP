@@ -143,11 +143,8 @@ public class ParseSen {
         Thread myThread = new Thread(new Runnable() {
             public void run() {
                 parse_part(mm, ay, -1, mealDatas);
-                Log.i("info", "발싸! 1");
                 parse_part(mm, ay, 0, mealDatas);
-                Log.i("info", "발싸! 2");
                 parse_part(mm, ay, 1, mealDatas);
-                Log.i("info","발싸! 3");
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
                 return;

@@ -24,17 +24,17 @@
             android:background="#00abe6"
             android:textColor="#ffffff"
             android:text="5일"
-            android:textSize="15dp"
+            android:textSize="13dp"
             android:id="@+id/scell_dayindi"
             android:layout_gravity="left" />
 
         <TextView
-            android:paddingLeft="15dp"
+            android:paddingLeft="7dp"
             android:paddingRight="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="룰루랄라 룰루랄라 으쓱으\nasasadsadsa\nassad쓱"
-            android:textSize="15dp"
+            android:text="All bruised and broken, bleeding She asked to take my hand I turned, just keep on walking But you&apos;d do the same thing in the circumstance I&apos;m sure you&apos;ll understand"
+            android:textSize="13dp"
             android:id="@+id/scell_textview"
             android:layout_gravity="center" />
 

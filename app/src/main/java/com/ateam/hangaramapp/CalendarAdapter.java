@@ -115,11 +115,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         }
         else{
             Log.i("info", callist.get(position).getDate() % 100 + "일");
-            if(callist.get(position).getDate() == callist.get(position+1).getDate() && callist.get(position+1).getType()==2){
-                holder.scell_dayindi.setVisibility(View.INVISIBLE);
+            if(position!=0) {
+                if (callist.get(position).getDate() == callist.get(position - 1).getDate() && callist.get(position - 1).getType() == 2) {
+                    holder.scell_dayindi.setVisibility(View.INVISIBLE);
+                } else
+                    holder.scell_dayindi.setVisibility(View.VISIBLE);
             }
-            else
-                holder.scell_dayindi.setVisibility(View.VISIBLE);
             holder.scell_dayindi.setText(" "+callist.get(position).getDate()%100+" 일 ");
             holder.scell_textview.setText(callist.get(position).getName());
         }

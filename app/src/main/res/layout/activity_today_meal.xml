@@ -68,13 +68,13 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         card_view:contentPadding="5dp"
-        android:clickable="true"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="@dimen/cardview_default_elevation"
         card_view:cardBackgroundColor="@color/colorPrimaryDark"
+        android:clickable="true"
         android:transitionName="@string/transition_name_today_meal_card"
         android:foreground="?selectableItemBackground"
-        card_view:cardCornerRadius="4dp"
         android:layout_alignParentBottom="true"
-        card_view:cardElevation="@dimen/cardview_default_elevation"
         android:stateListAnimator="@anim/card_elevation">
 
         <TextView
