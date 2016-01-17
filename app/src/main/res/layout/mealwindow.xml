@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="2016년 3월 14일"
+        android:id="@+id/mw_dayindi"
+        android:padding="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="15dp"
+        android:paddingRight="8dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:layout_below="@id/mw_dayindi"
+
+        android:id="@+id/mw_lbox"
+        >
+
+        <TextView
+            android:padding="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:textColor="#ffffff"
+            android:text="점심"
+            android:textSize="14dp"
+            android:layout_gravity="left" />
+
+        <TextView
+            android:paddingLeft="7dp"
+            android:paddingRight="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="술취한 밤, 사는게 무서워 마신 술이 더 무거워. 다시는 마시지 않겠다는 후회를 해본다."
+            android:textSize="15dp"
+            android:id="@+id/mw_lunch"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="15dp"
+        android:paddingRight="8dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+
+        android:id="@+id/mw_dbox"
+        android:layout_below="@id/mw_lbox"
+        >
+
+        <TextView
+            android:padding="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:textColor="#ffffff"
+            android:text="저녁"
+            android:textSize="14dp"
+            android:layout_gravity="left" />
+
+        <TextView
+            android:paddingLeft="7dp"
+            android:paddingRight="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="곽정훈 서울시립대 교수는 14일 서울 여의도 전경련회관 로즈홀에서 열린 '디스플레이'"
+            android:textSize="15dp"
+            android:id="@+id/mw_dinner"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+</RelativeLayout>

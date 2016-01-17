@@ -29,9 +29,9 @@ public class  mealData{
     private String dinner;
     private int date;
     private boolean check;
-    public String getLunch(){ return lunch; }
+    public String getLunch(){ return removeAllergie(lunch); }
     public String getMealData(){ return removeAllergie("[중식]\n"+getLunch()+"\n[석식]\n"+getDinner());}
-    public String getDinner(){ return dinner; }
+    public String getDinner(){ return removeAllergie(dinner); }
     public boolean getCheck(){ return check;}
     public void setCheck(){check = true;}
     public int getDate(){ return date;}

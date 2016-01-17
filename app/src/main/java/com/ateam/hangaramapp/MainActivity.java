@@ -9,6 +9,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -146,12 +149,24 @@ public class MainActivity extends AppCompatActivity
 
         for(int i=0;i<mealDatas.size();i++){
             if(mealDatas.get(i).getDate() == t_year*10000+t_month*100+t_day){
-                today_meal.setTextSize(15);
-                today_meal.setText("<"+t_year+"년 "+t_month+"월 "+t_day+"일>\n"+mealDatas.get(i).getMealData());
+
+                FragmentManager fm = getSupportFragmentManager();
+                // findFragmentById(android.R.id.content) = 루트뷰
+                // 리스트로 사용할 MainListFragment 생성
+                MealWindowFragment frag = new MealWindowFragment();
+                frag.setparam(mealDatas.get(i).getLunch(), mealDatas.get(i).getDinner(),t_year+"년 "+t_month+"월 "+t_day+"일");
+
+                FragmentTransaction fragmentTransaction = fm.beginTransaction();
+                fragmentTransaction.replace(R.id.mealwindowfrag, frag);
+                fragmentTransaction.commit();
+                today_meal.setVisibility(View.GONE);
+
+//                getFragmentManager().beginTransaction().add(R.id.mealwindowfrag, frag).commit();
                 return;
             }
         }
 
+        today_meal.setVisibility(View.VISIBLE);
         today_meal.setTextSize(18);
         today_meal.setText("오늘의 급식");
     }
