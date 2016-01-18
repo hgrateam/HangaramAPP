@@ -25,7 +25,7 @@
         android:foreground="?selectableItemBackground"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="@dimen/cardview_default_elevation"
-        android:stateListAnimator="@anim/card_elevation">
+        android:stateListAnimator="@animator/card_elevation">
 
         <FrameLayout
             android:id="@+id/mealwindowfrag"
@@ -59,7 +59,7 @@
         android:foreground="?selectableItemBackground"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="@dimen/cardview_default_elevation"
-        android:stateListAnimator="@anim/card_elevation">
+        android:stateListAnimator="@animator/card_elevation">
 
         <TextView
             android:id="@+id/schedule"
@@ -83,7 +83,7 @@
         android:foreground="?selectableItemBackground"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="@dimen/cardview_default_elevation"
-        android:stateListAnimator="@anim/card_elevation">
+        android:stateListAnimator="@animator/card_elevation">
 
         <TextView
             android:id="@+id/time_table"

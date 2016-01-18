@@ -75,7 +75,7 @@
         android:transitionName="@string/transition_name_today_meal_card"
         android:foreground="?selectableItemBackground"
         android:layout_alignParentBottom="true"
-        android:stateListAnimator="@anim/card_elevation">
+        android:stateListAnimator="@animator/card_elevation">
 
         <TextView
             android:layout_width="wrap_content"
