@@ -1,17 +1,26 @@
 package com.ateam.hangaramapp;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
 import java.util.ArrayList;
@@ -23,11 +32,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class TodayMealActivity extends AppCompatActivity {
-
+public class TodayMealActivity extends AppCompatActivity
+        implements FragmentManager.OnBackStackChangedListener {
 
     private ProgressDialog progDialog;
     private CalendarPickerView calendar;
@@ -49,6 +60,11 @@ public class TodayMealActivity extends AppCompatActivity {
     // 예외 또 있음!
     // 1월 급식 있고 2월 급식 없고 3월 급식있고 지금 2월 중순이면 어떻게 될까요오?
 
+
+    /**
+     * Whether or not we're showing the back of the card (otherwise showing the front).
+     */
+    private boolean mShowingBack = false;
 
     public TodayMealActivity(Context context){
         this.context = context;
@@ -168,12 +184,36 @@ public class TodayMealActivity extends AppCompatActivity {
         context = TodayMealActivity.this;
         setContentView(R.layout.activity_today_meal);
 
+
+        if (savedInstanceState == null) {
+            // If there is no saved instance state, add a fragment representing the
+            // front of the card to this activity. If there is saved instance state,
+            // this fragment will have already been added to the activity.
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.mealwindow_container, new CardFrontFragment())
+                    .commit();
+        } else {
+            mShowingBack = (getFragmentManager().getBackStackEntryCount() > 0);
+        }
+
+        // Monitor back stack changes to ensure the action bar shows the appropriate
+        // button (either "photo" or "info").
+        getFragmentManager().addOnBackStackChangedListener(this);
         Button button1 = (Button) findViewById(R.id.today_meal_button1);
         // 잠시 버튼은 안보이게...
         button1.setVisibility(View.GONE);
 
         schedule = (TextView) findViewById(R.id.schedule_today_meal);
         calendar = (CalendarPickerView) findViewById(R.id.calendar_view);
+
+        CardView cardview = (CardView) findViewById(R.id.mealwindow_container);
+        cardview.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                flipCard();
+            }
+        });
 
         progDialog = new ProgressDialog(this);
 
@@ -190,6 +230,7 @@ public class TodayMealActivity extends AppCompatActivity {
 
         drawNullCalendar();
         Log.i("info", "오늘의 날짜 : " + t_year + "/" + t_month + "/" + t_day);
+
 
         //급식 선택 달력에 표시되는 날짜의 범위를 설정한다.
         calendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
@@ -219,8 +260,8 @@ public class TodayMealActivity extends AppCompatActivity {
         else{
             drawCalendar();
         }
-
     }
+
     public void gotoParse(int y, int m, final ArrayList<mealData> mealDatas){
 
         // boolean isFirst 의 역활 :
@@ -459,4 +500,73 @@ public class TodayMealActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public class CardFrontFragment extends Fragment{
+        public CardFrontFragment() {
+        }
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.mealwindow, container, false);
+        }
+    }
+
+    public class CardBackFragment extends Fragment{
+        public CardBackFragment() {
+        }
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.mealwindow, container, false);
+        }
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        mShowingBack = (getFragmentManager().getBackStackEntryCount() > 0);
+
+        // When the back stack changes, invalidate the options menu (action bar).
+        //invalidateOptionsMenu();
+    }
+
+    private void flipCard() {
+        if (mShowingBack) {
+            getFragmentManager().popBackStack();
+            return;
+        }
+
+        // Flip to the back.
+
+        mShowingBack = true;
+
+        // Create and commit a new fragment transaction that adds the fragment for
+        // the back of the card, uses custom animations, and is part of the fragment
+        // manager's back stack.
+
+        getFragmentManager()
+                .beginTransaction()
+
+                        // Replace the default fragment animations with animator resources
+                        // representing rotations when switching to the back of the card, as
+                        // well as animator resources representing rotations when flipping
+                        // back to the front (e.g. when the system Back button is pressed).
+                .setCustomAnimations(
+                        R.animator.card_flip_right_in,
+                        R.animator.card_flip_right_out,
+                        R.animator.card_flip_left_in,
+                        R.animator.card_flip_left_out)
+
+                        // Replace any fragments currently in the container view with a
+                        // fragment representing the next page (indicated by the
+                        // just-incremented currentPage variable).
+                .replace(R.id.mealwindow_container, new CardBackFragment())
+
+                        // Add this transaction to the back stack, allowing users to press
+                        // Back to get to the front of the card.
+                .addToBackStack(null)
+
+                        // Commit the transaction.
+                .commit();
+    }
+
 }

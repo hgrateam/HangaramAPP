@@ -5,7 +5,6 @@
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
-    <string name="today_meal">오늘의 급식이 돌아왔습니다!</string>
 
     <string name="navigation_drawer_menu_communicate">소통하는 한가람</string>
     <string name="navigation_drawer_menu_today_meal">오늘의 급식</string>

@@ -67,6 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:id="@+id/mealwindow_container"
         card_view:contentPadding="5dp"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="@dimen/cardview_default_elevation"
