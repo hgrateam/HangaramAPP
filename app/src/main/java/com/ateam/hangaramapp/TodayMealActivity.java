@@ -4,13 +4,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,8 +27,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -226,7 +219,7 @@ public class TodayMealActivity extends AppCompatActivity
         GregorianCalendar gcalendar = new GregorianCalendar();
         t_year=gcalendar.get(Calendar.YEAR); // index 1
         t_month=gcalendar.get(Calendar.MONTH)+1; // index 1
-        t_day=gcalendar.get(Calendar. DAY_OF_MONTH); // index 1
+        t_day=gcalendar.get(Calendar.DAY_OF_MONTH); // index 1
 
         drawNullCalendar();
         Log.i("info", "오늘의 날짜 : " + t_year + "/" + t_month + "/" + t_day);
@@ -239,6 +232,7 @@ public class TodayMealActivity extends AppCompatActivity
                 // public void setText(date)참조;
                 setCellInfo(date, mealDatas);
             }
+
             @Override
             public void onDateUnselected(Date date) {
 
@@ -536,37 +530,35 @@ public class TodayMealActivity extends AppCompatActivity
         }
 
         // Flip to the back.
-
         mShowingBack = true;
 
         // Create and commit a new fragment transaction that adds the fragment for
         // the back of the card, uses custom animations, and is part of the fragment
         // manager's back stack.
+            getFragmentManager()
+                    .beginTransaction()
 
-        getFragmentManager()
-                .beginTransaction()
+                            // Replace the default fragment animations with animator resources
+                            // representing rotations when switching to the back of the card, as
+                            // well as animator resources representing rotations when flipping
+                            // back to the front (e.g. when the system Back button is pressed).
+                    .setCustomAnimations(
+                            R.animator.card_flip_right_in,
+                            R.animator.card_flip_right_out,
+                            R.animator.card_flip_left_in,
+                            R.animator.card_flip_left_out)
 
-                        // Replace the default fragment animations with animator resources
-                        // representing rotations when switching to the back of the card, as
-                        // well as animator resources representing rotations when flipping
-                        // back to the front (e.g. when the system Back button is pressed).
-                .setCustomAnimations(
-                        R.animator.card_flip_right_in,
-                        R.animator.card_flip_right_out,
-                        R.animator.card_flip_left_in,
-                        R.animator.card_flip_left_out)
+                            // Replace any fragments currently in the container view with a
+                            // fragment representing the next page (indicated by the
+                            // just-incremented currentPage variable).
+                    .replace(R.id.mealwindow_container, new CardBackFragment())
 
-                        // Replace any fragments currently in the container view with a
-                        // fragment representing the next page (indicated by the
-                        // just-incremented currentPage variable).
-                .replace(R.id.mealwindow_container, new CardBackFragment())
+                            // Add this transaction to the back stack, allowing users to press
+                            // Back to get to the front of the card.
+                    .addToBackStack(null)
 
-                        // Add this transaction to the back stack, allowing users to press
-                        // Back to get to the front of the card.
-                .addToBackStack(null)
-
-                        // Commit the transaction.
-                .commit();
+                            // Commit the transaction.
+                    .commit();
     }
 
 }
