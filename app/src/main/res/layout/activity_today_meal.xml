@@ -71,23 +71,11 @@
         card_view:contentPadding="5dp"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="@dimen/cardview_default_elevation"
-        card_view:cardBackgroundColor="@color/colorPrimaryDark"
         android:clickable="true"
         android:transitionName="@string/transition_name_today_meal_card"
         android:foreground="?selectableItemBackground"
         android:layout_alignParentBottom="true"
         android:stateListAnimator="@animator/card_elevation">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="점심메뉴"
-            android:layout_marginTop="5dp"
-            android:padding="5dp"
-            android:textSize="24sp"
-            android:background="@color/colorAccent"
-            android:textColor="@android:color/white"/>
-
 
         <TextView
             android:id="@+id/schedule_today_meal"
@@ -99,17 +87,6 @@
             android:textSize="18sp"
             android:textColor="@android:color/white"
             android:text="오늘의 급식이 표시되는 공간입니다."/>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="75dp"
-            android:text="알레르기 정보"
-            android:textSize="15sp"
-            android:layout_marginLeft="30dp"
-            android:gravity="center"
-            android:background="@drawable/allergy_info_chip"/>
 
     </android.support.v7.widget.CardView>
 

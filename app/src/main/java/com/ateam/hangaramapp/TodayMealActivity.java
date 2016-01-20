@@ -37,6 +37,7 @@ public class TodayMealActivity extends AppCompatActivity
     private CalendarPickerView calendar;
     private TextView schedule;
     Context context;
+    MealWindowFragment mealfrag;
 
     private int t_year,t_month,t_day;
 
@@ -177,17 +178,18 @@ public class TodayMealActivity extends AppCompatActivity
         context = TodayMealActivity.this;
         setContentView(R.layout.activity_today_meal);
 
+        mealfrag = new MealWindowFragment();
 
         if (savedInstanceState == null) {
             // If there is no saved instance state, add a fragment representing the
             // front of the card to this activity. If there is saved instance state,
             // this fragment will have already been added to the activity.
-            MealWindowFragment fragment;
-            fragment = new MealWindowFragment();
 
+
+            mealfrag.setparam("","",MSG_NO_MEAL);
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.mealwindow_container, fragment, null)
+                    .add(R.id.mealwindow_container, mealfrag, null)
                     .commit();
         } else {
             mShowingBack = (getFragmentManager().getBackStackEntryCount() > 0);
@@ -201,6 +203,7 @@ public class TodayMealActivity extends AppCompatActivity
         button1.setVisibility(View.GONE);
 
         schedule = (TextView) findViewById(R.id.schedule_today_meal);
+        schedule.setVisibility(View.GONE);
         calendar = (CalendarPickerView) findViewById(R.id.calendar_view);
 
         CardView cardview = (CardView) findViewById(R.id.mealwindow_container);
@@ -481,11 +484,17 @@ public class TodayMealActivity extends AppCompatActivity
 
                 // 알레르기 정보를 표기 할것인가?
                 // 이건 프리퍼런스에서 변수를 설정한다음에 그 후에 처리하기
-                schedule.setText(str);
+//                schedule.setText(str);
+                mealfrag.setparam(mealdatas.get(i).getLunch(), mealdatas.get(i).getDinner(),"");
+                getFragmentManager().beginTransaction().
+                        replace(R.id.mealwindow_container, mealfrag, null).
+                        commit();
                 return;
             }
         }
-        schedule.setText(MSG_NO_MEAL);
+//        schedule.setText(MSG_NO_MEAL);
+        mealfrag.setparam("","",MSG_NO_MEAL);
+
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -538,30 +547,30 @@ public class TodayMealActivity extends AppCompatActivity
         // Create and commit a new fragment transaction that adds the fragment for
         // the back of the card, uses custom animations, and is part of the fragment
         // manager's back stack.
-            getFragmentManager()
-                    .beginTransaction()
+        getFragmentManager()
+                .beginTransaction()
 
-                            // Replace the default fragment animations with animator resources
-                            // representing rotations when switching to the back of the card, as
-                            // well as animator resources representing rotations when flipping
-                            // back to the front (e.g. when the system Back button is pressed).
-                    .setCustomAnimations(
-                            R.animator.card_flip_right_in,
-                            R.animator.card_flip_right_out,
-                            R.animator.card_flip_left_in,
-                            R.animator.card_flip_left_out)
+                        // Replace the default fragment animations with animator resources
+                        // representing rotations when switching to the back of the card, as
+                        // well as animator resources representing rotations when flipping
+                        // back to the front (e.g. when the system Back button is pressed).
+                .setCustomAnimations(
+                        R.animator.card_flip_right_in,
+                        R.animator.card_flip_right_out,
+                        R.animator.card_flip_left_in,
+                        R.animator.card_flip_left_out)
 
-                            // Replace any fragments currently in the container view with a
-                            // fragment representing the next page (indicated by the
-                            // just-incremented currentPage variable).
-                    .replace(R.id.mealwindow_container, new CardBackFragment())
+                        // Replace any fragments currently in the container view with a
+                        // fragment representing the next page (indicated by the
+                        // just-incremented currentPage variable).
+                .replace(R.id.mealwindow_container, mealfrag)
 
-                            // Add this transaction to the back stack, allowing users to press
-                            // Back to get to the front of the card.
-                    .addToBackStack(null)
+                        // Add this transaction to the back stack, allowing users to press
+                        // Back to get to the front of the card.
+                .addToBackStack(null)
 
-                            // Commit the transaction.
-                    .commit();
+                        // Commit the transaction.
+                .commit();
     }
 
 }

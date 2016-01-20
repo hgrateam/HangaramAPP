@@ -76,13 +76,29 @@ public class MealWindowFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View layout = inflater.inflate(R.layout.mealwindow, container, false);
-        datetv = (TextView) layout.findViewById(R.id.mw_dayindi);
 
+        datetv = (TextView) layout.findViewById(R.id.mw_dayindi);
         lunchtv = (TextView) layout.findViewById(R.id.mw_lunch);
         dinnertv = (TextView) layout.findViewById(R.id.mw_dinner);
+
         lunchtv.setText(mParam1);
         dinnertv.setText(mParam2);
         datetv.setText(date);
+
+
+
+        lunchtv.setVisibility((mParam1.equals("") ? View.GONE : View.VISIBLE));
+        dinnertv.setVisibility((mParam2.equals("")? View.GONE:View.VISIBLE));
+
+        if(mParam1.equals("") && mParam2.equals("")){
+
+            datetv.setVisibility(View.VISIBLE);
+            datetv.setText(date);
+        }
+        else
+            datetv.setVisibility((date.equals("")? View.GONE:View.VISIBLE));
+
+
         return layout;
     }
 
