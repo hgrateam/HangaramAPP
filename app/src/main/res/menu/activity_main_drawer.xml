@@ -6,18 +6,18 @@
             <menu>
                 <item
                     android:id="@+id/shcool_info"
-                    android:icon="@drawable/ic_menu_camera"
-                    android:title="Import" />
+                    android:icon="@drawable/ic_school_black_24dp"
+                    android:title="학교 소개" />
                 <item
                     android:id="@+id/teachers"
-                    android:icon="@drawable/ic_menu_camera"
-                    android:title="Import" />
+                    android:icon="@drawable/ic_people_black_24dp"
+                    android:title="한가람의 선생님" />
             </menu>
        </item>
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/calculator"
+            android:icon="@drawable/ic_gavel_black_24dp"
+            android:title="성적 계산기" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"

@@ -211,9 +211,9 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.shcool_info) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.teachers) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.calculator) {
 
         } else if (id == R.id.nav_settings) {
             item.setCheckable(false);
