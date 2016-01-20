@@ -7,7 +7,6 @@
     <string name="navigation_drawer_menu_today_meal">Today\'s Meal</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">HangaramAPP</string>
-    <string name="today_meal">Coming Soon!</string>
     <string name="pref_header_manage_data">Manage Database</string>
     <string name="pref_delete_meal_db">Initialize saved Today\'s Meal database</string>
     <string name="pref_delete_meal_db_summary">Use when meal related error have occured.</string>

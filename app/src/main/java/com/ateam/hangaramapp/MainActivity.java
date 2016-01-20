@@ -9,8 +9,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity
         for(int i=0;i<mealDatas.size();i++){
             if(mealDatas.get(i).getDate() == t_year*10000+t_month*100+t_day){
 
-                FragmentManager fm = getSupportFragmentManager();
+                FragmentManager fm = getFragmentManager();
                 // findFragmentById(android.R.id.content) = 루트뷰
                 // 리스트로 사용할 MainListFragment 생성
                 MealWindowFragment frag = new MealWindowFragment();
@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.shcool_info) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 

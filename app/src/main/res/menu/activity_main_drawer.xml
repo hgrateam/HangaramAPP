@@ -2,10 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+       <item android:title="학교메뉴">
+            <menu>
+                <item
+                    android:id="@+id/shcool_info"
+                    android:icon="@drawable/ic_menu_camera"
+                    android:title="Import" />
+                <item
+                    android:id="@+id/teachers"
+                    android:icon="@drawable/ic_menu_camera"
+                    android:title="Import" />
+            </menu>
+       </item>
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"

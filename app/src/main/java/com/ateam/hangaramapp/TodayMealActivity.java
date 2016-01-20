@@ -182,9 +182,12 @@ public class TodayMealActivity extends AppCompatActivity
             // If there is no saved instance state, add a fragment representing the
             // front of the card to this activity. If there is saved instance state,
             // this fragment will have already been added to the activity.
+            MealWindowFragment fragment;
+            fragment = new MealWindowFragment();
+
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.mealwindow_container, new CardFrontFragment())
+                    .add(R.id.mealwindow_container, fragment, null)
                     .commit();
         } else {
             mShowingBack = (getFragmentManager().getBackStackEntryCount() > 0);
