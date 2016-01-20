@@ -78,7 +78,7 @@
             android:paddingRight="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="곽정훈 서울시립대 교수는 14일 서울 여의도 전경련회관 로즈홀에서 열린 '디스플레이'"
+            android:text="시선을 정리하고서 창백한 약국 아주머니 풀린 두 눈을 보며 아스피린 두알 주세요"
             android:textSize="15dp"
             android:id="@+id/mw_dinner"
             android:layout_gravity="center" />

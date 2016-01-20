@@ -21,8 +21,8 @@ public class MealWindowFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "lunch";
-    private static final String ARG_PARAM2 = "dinner";
+    private static final String ARG_LUNCH = "lunch";
+    private static final String ARG_DINNER = "dinner";
 
     TextView lunchtv;
     TextView dinnertv;
@@ -51,8 +51,8 @@ public class MealWindowFragment extends Fragment {
     public static MealWindowFragment newInstance(String param1, String param2) {
         MealWindowFragment fragment = new MealWindowFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_LUNCH, param1);
+        args.putString(ARG_DINNER, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,8 +66,8 @@ public class MealWindowFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam1 = getArguments().getString(ARG_LUNCH);
+            mParam2 = getArguments().getString(ARG_DINNER);
         }
     }
 
