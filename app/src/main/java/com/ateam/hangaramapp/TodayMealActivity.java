@@ -12,10 +12,8 @@ import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
 import java.util.ArrayList;
@@ -38,6 +36,7 @@ public class TodayMealActivity extends AppCompatActivity
     private TextView schedule;
     Context context;
     MealWindowFragment mealfrag;
+    MealWindowFragment mealfrag_allergy;
 
     private int t_year,t_month,t_day;
 
@@ -162,6 +161,16 @@ public class TodayMealActivity extends AppCompatActivity
                 check = true;
                 startDate = ymdToInt(t_year,t_month,1);
             }
+            else{
+                if(!isOnRange(startDate)){
+                    if(t_month == 1){
+                        startDate=ymdToInt(t_year-1,12,1);
+                    }
+                    else{
+                        startDate=ymdToInt(t_year,t_month-1,1);
+                    }
+                }
+            }
 
             if(endDate < ymdToInt(t_year,t_month,t_day)){{
                 endDate = ymdToInt(t_year,t_month,27);
@@ -179,6 +188,9 @@ public class TodayMealActivity extends AppCompatActivity
         setContentView(R.layout.activity_today_meal);
 
         mealfrag = new MealWindowFragment();
+        mealfrag_allergy = new MealWindowFragment();
+
+        mealfrag_allergy.setAllergyflag();
 
         if (savedInstanceState == null) {
             // If there is no saved instance state, add a fragment representing the
@@ -187,6 +199,7 @@ public class TodayMealActivity extends AppCompatActivity
 
 
             mealfrag.setparam("","",MSG_NO_MEAL);
+            mealfrag_allergy.setparam("","",MSG_NO_MEAL);
             getFragmentManager()
                     .beginTransaction()
                     .add(R.id.mealwindow_container, mealfrag, null)
@@ -198,9 +211,6 @@ public class TodayMealActivity extends AppCompatActivity
         // Monitor back stack changes to ensure the action bar shows the appropriate
         // button (either "photo" or "info").
         getFragmentManager().addOnBackStackChangedListener(this);
-        Button button1 = (Button) findViewById(R.id.today_meal_button1);
-        // 잠시 버튼은 안보이게...
-        button1.setVisibility(View.GONE);
 
         schedule = (TextView) findViewById(R.id.schedule_today_meal);
         schedule.setVisibility(View.GONE);
@@ -477,6 +487,9 @@ public class TodayMealActivity extends AppCompatActivity
     private void setCellInfo(Date date, ArrayList<mealData> mealdatas){
         Log.i("info", dateToInt(date) + " 날짜가 선택되었당.");
 
+        mealfrag.setparam("","",MSG_NO_MEAL);
+        mealfrag_allergy.setparam("","",MSG_NO_MEAL);
+
         for(int i=0;i<mealdatas.size();i++){
             if(mealdatas.get(i).getDate() == dateToInt(date)){
                 String str = mealdatas.get(i).getMealData();
@@ -484,16 +497,17 @@ public class TodayMealActivity extends AppCompatActivity
 
                 // 알레르기 정보를 표기 할것인가?
                 // 이건 프리퍼런스에서 변수를 설정한다음에 그 후에 처리하기
-//                schedule.setText(str);
-                mealfrag.setparam(mealdatas.get(i).getLunch(), mealdatas.get(i).getDinner(),"");
-                getFragmentManager().beginTransaction().
-                        replace(R.id.mealwindow_container, mealfrag, null).
-                        commit();
-                return;
+                mealfrag.setparam(mealdatas.get(i).getLunch(), mealdatas.get(i).getDinner(), "");
+                mealfrag_allergy.setparam(mealdatas.get(i).getAllergyLunch(), mealdatas.get(i).getAllergyDinner(), "");
+
+                break;
             }
         }
-//        schedule.setText(MSG_NO_MEAL);
-        mealfrag.setparam("","",MSG_NO_MEAL);
+
+        getFragmentManager().beginTransaction().
+        detach(mealfrag).
+                attach(mealfrag).
+                commit();
 
     }
     @Override
@@ -505,26 +519,6 @@ public class TodayMealActivity extends AppCompatActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public class CardFrontFragment extends Fragment{
-        public CardFrontFragment() {
-        }
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.mealwindow, container, false);
-        }
-    }
-
-    public class CardBackFragment extends Fragment{
-        public CardBackFragment() {
-        }
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.mealwindow, container, false);
-        }
     }
 
     @Override
@@ -549,7 +543,6 @@ public class TodayMealActivity extends AppCompatActivity
         // manager's back stack.
         getFragmentManager()
                 .beginTransaction()
-
                         // Replace the default fragment animations with animator resources
                         // representing rotations when switching to the back of the card, as
                         // well as animator resources representing rotations when flipping
@@ -563,8 +556,7 @@ public class TodayMealActivity extends AppCompatActivity
                         // Replace any fragments currently in the container view with a
                         // fragment representing the next page (indicated by the
                         // just-incremented currentPage variable).
-                .replace(R.id.mealwindow_container, mealfrag)
-
+                .replace(R.id.mealwindow_container, mealfrag_allergy)
                         // Add this transaction to the back stack, allowing users to press
                         // Back to get to the front of the card.
                 .addToBackStack(null)

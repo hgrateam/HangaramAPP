@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -24,9 +25,13 @@ public class MealWindowFragment extends Fragment {
     private static final String ARG_LUNCH = "lunch";
     private static final String ARG_DINNER = "dinner";
 
+    boolean allergy_flag;
     TextView lunchtv;
     TextView dinnertv;
     TextView datetv;
+    TextView allergy_info;
+
+    LinearLayout lbox, dbox;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -35,10 +40,8 @@ public class MealWindowFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public MealWindowFragment() {
-        // Required empty public constructor
-    }
 
+        // Required empty public constructor
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -62,6 +65,9 @@ public class MealWindowFragment extends Fragment {
         mParam2 = p2;
         this.date = date;
     }
+    public void setAllergyflag(){
+        allergy_flag = true;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +86,10 @@ public class MealWindowFragment extends Fragment {
         datetv = (TextView) layout.findViewById(R.id.mw_dayindi);
         lunchtv = (TextView) layout.findViewById(R.id.mw_lunch);
         dinnertv = (TextView) layout.findViewById(R.id.mw_dinner);
+        allergy_info = (TextView) layout.findViewById(R.id.mw_allergy_info);
+
+        lbox = (LinearLayout) layout.findViewById(R.id.mw_lbox);
+        dbox = (LinearLayout) layout.findViewById(R.id.mw_dbox);
 
         lunchtv.setText(mParam1);
         dinnertv.setText(mParam2);
@@ -87,8 +97,9 @@ public class MealWindowFragment extends Fragment {
 
 
 
-        lunchtv.setVisibility((mParam1.equals("") ? View.GONE : View.VISIBLE));
-        dinnertv.setVisibility((mParam2.equals("")? View.GONE:View.VISIBLE));
+        allergy_info.setVisibility((allergy_flag)? View.VISIBLE:View.GONE);
+        lbox.setVisibility((mParam1.equals("") ? View.GONE : View.VISIBLE));
+        dbox.setVisibility((mParam2.equals("")? View.GONE:View.VISIBLE));
 
         if(mParam1.equals("") && mParam2.equals("")){
 

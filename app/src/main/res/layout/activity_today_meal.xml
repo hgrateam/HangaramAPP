@@ -36,18 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="?attr/actionBarSize"
-            android:paddingBottom="200dp"
+            android:paddingBottom="100dp"
             />
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/todal_meal_button1"
-            android:id="@+id/today_meal_button1"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="193dp" />
 
     </RelativeLayout>
 
