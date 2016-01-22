@@ -311,8 +311,8 @@ public class TodayMealActivity extends AppCompatActivity
                 if (mealDatas.size() != 0) {
                     for (int i = 0; i < mealDatas.size(); i++) {
                         date = mealDatas.get(i).getDate();
-                        Log.i("info", "insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + mealDatas.get(i).getLunch() + "', '" + mealDatas.get(i).getDinner() + "');");
-                        helper.insert("insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + mealDatas.get(i).getLunch() + "', '" + mealDatas.get(i).getDinner() + "');");
+                        Log.i("info", "insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + mealDatas.get(i).getAllergyLunch() + "', '" + mealDatas.get(i).getAllergyDinner() + "');");
+                        helper.insert("insert into " + DBHelper.TODAYMEAL_TABLE_NAME + " (date, lunch, dinner) values (" + date + ", '" + mealDatas.get(i).getAllergyLunch() + "', '" + mealDatas.get(i).getAllergyDinner() + "');");
 
                         // 새로운 DB추가! 적어도 하나는 DB에 추가했구나
                     }
