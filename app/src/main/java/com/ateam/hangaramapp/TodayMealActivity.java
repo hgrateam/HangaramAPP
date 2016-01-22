@@ -487,6 +487,10 @@ public class TodayMealActivity extends AppCompatActivity
     private void setCellInfo(Date date, ArrayList<mealData> mealdatas){
         Log.i("info", dateToInt(date) + " 날짜가 선택되었당.");
 
+        if (mShowingBack) {
+            getFragmentManager().popBackStack();
+        }
+
         mealfrag.setparam("","",MSG_NO_MEAL);
         mealfrag_allergy.setparam("","",MSG_NO_MEAL);
 
@@ -508,6 +512,7 @@ public class TodayMealActivity extends AppCompatActivity
         detach(mealfrag).
                 attach(mealfrag).
                 commit();
+
 
     }
     @Override
